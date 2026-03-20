@@ -1,12 +1,19 @@
 # Business Sales & Inventory Turnover Analysis
 
-## Project Overview
+Generate HTML business review reports from monthly sales and inventory Excel files.
 
-This project analyzes sales data and inventory turnover, generating professional data analysis reports.
+This repository contains the report pipeline, public template, and documentation. The public repo does not include real raw data or generated report output with business data.
+
+## Features
+
+- Process monthly sales and inventory Excel files into structured analysis data
+- Generate a browser-friendly HTML report with charts, ranking tables, and inventory risk views
+- Support multi-period analysis, brand/store/product breakdowns, and regional reporting
+- Provide a public report template with sanitized sample data for preview and development
 
 ## Report Preview
 
-The screenshots below use sanitized example data from the public report template.
+The screenshots below are generated from the sanitized public template.
 
 ### Overview
 
@@ -16,25 +23,60 @@ The screenshots below use sanitized example data from the public report template
 
 ![Report Detail](docs/images/report-detail.png)
 
-## Project Structure
+## Quick Start
 
-``` 
+### 1. Prepare input files
+
+- Put monthly sales files in `raw_data/`
+- Put inventory files in `raw_data/`
+- Update `config.yaml` if file names or thresholds differ from the defaults
+
+### 2. Run the pipeline
+
+macOS / Linux:
+
+```bash
+./run.sh
+```
+
+Windows:
+
+```bat
+run.bat
+```
+
+Manual mode:
+
+```bash
+python scripts/data_processor.py
+python scripts/create_final_report.py
+```
+
+### 3. View the result
+
+- Local generated report: `reports/report_with_data.html`
+- Public example template: `reports/business_sales_inventory_report.html`
+
+## Repository Layout
+
+```text
 pseudoctor-business-reviewer/
 ├── config.yaml
 ├── run.sh / run.bat
-├── raw_data/                                  # Input Excel files
+├── raw_data/                                  # Local input Excel files
 ├── data/
-│   ├── analysis_data.json                     # Structured analysis output
-│   └── china_city_province.csv                # City→province mapping
+│   ├── analysis_data.json                     # Local generated analysis output (gitignored)
+│   └── china_city_province.csv                # City-to-province mapping
 ├── scripts/
 │   ├── data_processor.py                      # Analysis data pipeline
 │   ├── create_final_report.py                 # HTML report builder
 │   ├── common_data_utils.py                   # Shared data utilities
-│   ├── marketing_analysis_example.py          # Optional demo script
-│   └── marketing_analysis_template.py         # Optional demo template
+│   ├── benchmark_crossfilter_perf.py          # Frontend filter benchmark
+│   ├── marketing_analysis_example.py          # Optional example script
+│   └── marketing_analysis_template.py         # Optional example template
 ├── reports/
-│   ├── business_sales_inventory_report.html   # Public report template with sample data
-│   └── report_with_data.html                  # Generated local report (gitignored)
+│   ├── business_sales_inventory_report.html   # Public template with sample data
+│   └── report_with_data.html                  # Local generated report (gitignored)
 ├── docs/
 │   ├── INTEGRATION_GUIDE.md
 │   ├── images/
@@ -44,40 +86,10 @@ pseudoctor-business-reviewer/
 └── README.md
 ```
 
-## Usage Instructions
+## Documentation
 
-### Data Preparation
-
-1. Place monthly sales data files (format: YYYYMM.xlsx) in `raw_data/` directory
-2. Place inventory data files (format: YYYYMM库存.xlsx) in `raw_data/` directory
-
-### Generate Reports
-
-Recommended:
-
-1. Run `./run.sh` (macOS/Linux) or `run.bat` (Windows)
-2. The script runs:
-   - `python scripts/data_processor.py`
-   - `python scripts/create_final_report.py`
-3. Generated outputs:
-   - local `data/analysis_data.json`
-   - local `reports/report_with_data.html`
-
-Manual mode:
-
-1. Run `python scripts/data_processor.py` to generate `data/analysis_data.json`
-2. Run `python scripts/create_final_report.py` to generate `reports/report_with_data.html`
-
-### View Reports
-
-For local output, open `reports/report_with_data.html` directly in a browser.
-
-For the public repository preview, open `reports/business_sales_inventory_report.html`.
-
-## Report Template Specification
-
-For detailed report structure, calculation logic, and style specifications, refer to:
-- `docs/report_template_specification.md`
+- `docs/INTEGRATION_GUIDE.md`: integration notes and workflow details
+- `docs/report_template_specification.md`: report structure, metrics, and presentation rules
 
 ## Key Metrics
 
@@ -87,35 +99,26 @@ For detailed report structure, calculation logic, and style specifications, refe
 | Sales Quantity | SUM(sales_quantity of all records) |
 | Average Transaction Value (ATV) | Sales Amount / Sales Quantity |
 | Inventory Turnover Rate | Monthly Sales Quantity / Inventory Quantity |
-| Inventory/Sales Ratio | Inventory Quantity / Average Sales of Past 3 Months |
+| Inventory / Sales Ratio | Inventory Quantity / Average Sales of Past 3 Months |
 
-## Risk Level Classification
+## Risk Levels
 
-| Risk Level | Inventory/Sales Ratio | Color Indicator |
-|-----------|---------------------|----------------|
-| High Risk | ≥ 20 | 🔴 Red |
-| Medium Risk | 5 ≤ ratio < 20 | 🟡 Yellow |
-| Low Risk | < 5 | 🟢 Green |
+| Risk Level | Inventory / Sales Ratio | Color |
+|-----------|--------------------------|-------|
+| High Risk | ≥ 20 | Red |
+| Medium Risk | 5 ≤ ratio < 20 | Yellow |
+| Low Risk | < 5 | Green |
 
 ## Tech Stack
 
-- **Data Processing**: Python + Pandas
-- **Data Visualization**: Chart.js 4.4.1
-- **Frontend**: HTML5 + CSS3 + JavaScript
+- Python
+- Pandas
+- Chart.js
+- HTML / CSS / JavaScript
 
-## Data Source Locations
+## Public Repo Notes
 
-Raw data file storage locations:
-- Sales data: `/path/to/monthly/sales/data/`
-- Inventory data: `/path/to/inventory/data/`
-
-## Version History
-
-| Version | Date | Description |
-|---------|------|-------------|
-| v1.0 | 2026-01-31 | Initial version, defined report structure and calculation logic |
-
----
-
-**Project Created**: 2026-01-31
-**Last Updated**: 2026-01-31
+- `raw_data/` is local-only and should not be committed
+- `data/analysis_data.json` is generated locally and gitignored
+- `reports/report_with_data.html` is generated locally and gitignored
+- The committed template and screenshots use sanitized sample data only
