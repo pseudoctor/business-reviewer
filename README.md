@@ -30,7 +30,7 @@ The screenshots below are generated from the sanitized public template.
 
 ![Report Overview](docs/images/report-overview.png)
 
-### Detail View
+### Store Segmentation
 
 ![Report Detail](docs/images/report-detail.png)
 
