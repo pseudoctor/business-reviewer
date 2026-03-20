@@ -918,92 +918,1692 @@ body {
 
 <script>
 const chartData = {
-  monthlySales: [120000.0, 138000.0, 151500.0],
-  monthlyQty: [3200.0, 3560.0, 3890.0],
-  months: ["2026-01", "2026-02", "2026-03"],
-  dailySales: [
-    {"date": "2026-01-05", "value": 4200.0},
-    {"date": "2026-02-05", "value": 4680.0},
-    {"date": "2026-03-05", "value": 5120.0}
+  "monthlySales": [
+    120000,
+    138000,
+    151500
   ],
-  brandMonthlyStacked: {
-    "示例品牌A": [58000.0, 64000.0, 70200.0],
-    "示例品牌B": [39000.0, 45100.0, 48700.0],
-    "示例品牌C": [23000.0, 28900.0, 32600.0]
-  },
-  brandShares: [46.3, 32.1, 21.6],
-  brandQtyShares: [44.0, 34.0, 22.0],
-  brandQty: [4700, 3600, 2300],
-  top20Products: [
-    {"name": "示例商品A", "value": 52100},
-    {"name": "示例商品B", "value": 43800},
-    {"name": "示例商品C", "value": 39200}
+  "monthlyQty": [
+    3200,
+    3560,
+    3890
   ],
-  top20Stores: [
-    {"name": "示例门店A", "value": 30100},
-    {"name": "示例门店B", "value": 28750},
-    {"name": "示例门店C", "value": 25420}
+  "months": [
+    "2026-01",
+    "2026-02",
+    "2026-03"
   ],
-  productStability: [
-    {"name": "示例商品A", "months": 3, "sales": 52100},
-    {"name": "示例商品B", "months": 2, "sales": 43800}
+  "dailySales": [
+    {
+      "date": "2026-01-05",
+      "value": 4200
+    },
+    {
+      "date": "2026-02-05",
+      "value": 4680
+    },
+    {
+      "date": "2026-03-05",
+      "value": 5120
+    }
   ],
-  storeStability: [
-    {"name": "示例门店A", "months": 3, "sales": 30100},
-    {"name": "示例门店B", "months": 2, "sales": 28750}
-  ],
-  overviewTable: [
-    {"month": "2026-01", "rows": 1200, "stores": 18, "skus": 42, "sales_amount": 120000.0, "sales_qty": 3200.0, "sales_net": 113000.0},
-    {"month": "2026-02", "rows": 1280, "stores": 19, "skus": 45, "sales_amount": 138000.0, "sales_qty": 3560.0, "sales_net": 129400.0},
-    {"month": "2026-03", "rows": 1360, "stores": 21, "skus": 47, "sales_amount": 151500.0, "sales_qty": 3890.0, "sales_net": 142600.0}
-  ],
-  insights: [
-    {"type": "growth", "text": "示例数据中月销售额持续增长。"},
-    {"type": "brand", "text": "示例品牌A 保持领先。"}
-  ],
-  inventory: {
-    total_qty: 8600,
-    jan_sales_qty: 3890,
-    turnover_ratio: 2.21,
-    risk_thresholds: { high: 3.0, medium: 1.5 },
-    risk_counts: { high: 2, medium: 3, low: 15 },
-    slow_items: [
-      {"商品名称": "示例慢销商品A", "库存数量": 420, "1月销售数量": 60, "库存销售比": 7.0, "risk_level": "high"}
+  "brandMonthlyStacked": {
+    "示例品牌A": [
+      58000,
+      64000,
+      70200
+    ],
+    "示例品牌B": [
+      39000,
+      45100,
+      48700
+    ],
+    "示例品牌C": [
+      23000,
+      28900,
+      32600
     ]
   },
-  reportMeta: {
-    generatedAt: "2026-03-20 00:00:00",
-    monthRange: "2026-01 至 2026-03",
-    latestMonth: "2026-03"
+  "brandShares": [
+    46.3,
+    32.1,
+    21.6
+  ],
+  "brandQtyShares": [
+    44,
+    34,
+    22
+  ],
+  "brandQty": [
+    4700,
+    3600,
+    2300
+  ],
+  "top20Products": [
+    {
+      "name": "示例商品A",
+      "value": 52100
+    },
+    {
+      "name": "示例商品B",
+      "value": 43800
+    },
+    {
+      "name": "示例商品C",
+      "value": 39200
+    }
+  ],
+  "top20Stores": [
+    {
+      "name": "星河里样例店",
+      "value": 132720
+    },
+    {
+      "name": "晴川坊样例店",
+      "value": 121820
+    },
+    {
+      "name": "云锦天地样例店",
+      "value": 119350
+    },
+    {
+      "name": "远帆路样例店",
+      "value": 114960
+    },
+    {
+      "name": "琥珀长廊样例店",
+      "value": 114730
+    },
+    {
+      "name": "北屿广场样例店",
+      "value": 103880
+    },
+    {
+      "name": "晨雾里样例店",
+      "value": 55490
+    },
+    {
+      "name": "月栖街样例店",
+      "value": 47840
+    },
+    {
+      "name": "澄光巷样例店",
+      "value": 39610
+    },
+    {
+      "name": "青禾里样例店",
+      "value": 31240
+    },
+    {
+      "name": "松岚街样例店",
+      "value": 27600
+    },
+    {
+      "name": "东篱里样例店",
+      "value": 22140
+    }
+  ],
+  "productStability": [
+    {
+      "name": "示例商品A",
+      "months": 3,
+      "sales": 52100
+    },
+    {
+      "name": "示例商品B",
+      "months": 2,
+      "sales": 43800
+    }
+  ],
+  "storeStability": [
+    {
+      "name": "星河里样例店",
+      "months": 3,
+      "sales": 132720
+    },
+    {
+      "name": "晴川坊样例店",
+      "months": 3,
+      "sales": 121820
+    },
+    {
+      "name": "云锦天地样例店",
+      "months": 3,
+      "sales": 119350
+    },
+    {
+      "name": "远帆路样例店",
+      "months": 3,
+      "sales": 114960
+    },
+    {
+      "name": "琥珀长廊样例店",
+      "months": 3,
+      "sales": 114730
+    },
+    {
+      "name": "北屿广场样例店",
+      "months": 3,
+      "sales": 103880
+    },
+    {
+      "name": "晨雾里样例店",
+      "months": 2,
+      "sales": 55490
+    },
+    {
+      "name": "月栖街样例店",
+      "months": 2,
+      "sales": 47840
+    },
+    {
+      "name": "澄光巷样例店",
+      "months": 2,
+      "sales": 39610
+    },
+    {
+      "name": "青禾里样例店",
+      "months": 2,
+      "sales": 31240
+    },
+    {
+      "name": "松岚街样例店",
+      "months": 2,
+      "sales": 27600
+    },
+    {
+      "name": "东篱里样例店",
+      "months": 2,
+      "sales": 22140
+    }
+  ],
+  "overviewTable": [
+    {
+      "month": "2026-01",
+      "rows": 1200,
+      "stores": 18,
+      "skus": 42,
+      "sales_amount": 120000,
+      "sales_qty": 3200,
+      "sales_net": 113000
+    },
+    {
+      "month": "2026-02",
+      "rows": 1280,
+      "stores": 19,
+      "skus": 45,
+      "sales_amount": 138000,
+      "sales_qty": 3560,
+      "sales_net": 129400
+    },
+    {
+      "month": "2026-03",
+      "rows": 1360,
+      "stores": 21,
+      "skus": 47,
+      "sales_amount": 151500,
+      "sales_qty": 3890,
+      "sales_net": 142600
+    }
+  ],
+  "insights": [
+    {
+      "type": "growth",
+      "text": "示例数据中月销售额持续增长。"
+    },
+    {
+      "type": "brand",
+      "text": "示例品牌A 保持领先。"
+    }
+  ],
+  "inventory": {
+    "total_qty": 8600,
+    "jan_sales_qty": 3890,
+    "turnover_ratio": 2.21,
+    "risk_thresholds": {
+      "high": 3,
+      "medium": 1.5
+    },
+    "risk_counts": {
+      "high": 2,
+      "medium": 3,
+      "low": 15
+    },
+    "slow_items": [
+      {
+        "商品名称": "示例慢销商品A",
+        "库存数量": 420,
+        "1月销售数量": 60,
+        "库存销售比": 7,
+        "risk_level": "high"
+      }
+    ]
   },
-  crossFilter: {
-    records: [
-      {"month": "2026-01", "province": "示例省", "store": "示例门店A", "brand": "示例品牌A", "product": "示例商品A", "date": "2026-01-05", "amount": 4200.0, "qty": 120.0, "net": 3960.0}
+  "reportMeta": {
+    "period": "2026-01 至 2026-03",
+    "generatedDate": "2026-03-20",
+    "latestMonth": "2026-03"
+  },
+  "crossFilter": {
+    "records": [
+      {
+        "month": "2026-01",
+        "province": "示例省",
+        "store": "星河里样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品A",
+        "date": "2026-01-06",
+        "amount": 38488.8,
+        "qty": 487.2,
+        "net": 36179.47
+      },
+      {
+        "month": "2026-02",
+        "province": "示例省",
+        "store": "星河里样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品A",
+        "date": "2026-02-07",
+        "amount": 43797.6,
+        "qty": 554.4,
+        "net": 41169.74
+      },
+      {
+        "month": "2026-03",
+        "province": "示例省",
+        "store": "星河里样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品A",
+        "date": "2026-03-08",
+        "amount": 50433.6,
+        "qty": 638.4,
+        "net": 47407.58
+      },
+      {
+        "month": "2026-01",
+        "province": "示例省",
+        "store": "云锦天地样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品A",
+        "date": "2026-01-06",
+        "amount": 34611.5,
+        "qty": 446.6,
+        "net": 32534.81
+      },
+      {
+        "month": "2026-02",
+        "province": "示例省",
+        "store": "云锦天地样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品A",
+        "date": "2026-02-07",
+        "amount": 39385.5,
+        "qty": 508.2,
+        "net": 37022.37
+      },
+      {
+        "month": "2026-03",
+        "province": "示例省",
+        "store": "云锦天地样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品A",
+        "date": "2026-03-08",
+        "amount": 45353,
+        "qty": 585.2,
+        "net": 42631.82
+      },
+      {
+        "month": "2026-01",
+        "province": "示例省",
+        "store": "琥珀长廊样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品A",
+        "date": "2026-01-06",
+        "amount": 33271.7,
+        "qty": 432.1,
+        "net": 31275.4
+      },
+      {
+        "month": "2026-02",
+        "province": "示例省",
+        "store": "琥珀长廊样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品A",
+        "date": "2026-02-07",
+        "amount": 37860.9,
+        "qty": 491.7,
+        "net": 35589.25
+      },
+      {
+        "month": "2026-03",
+        "province": "示例省",
+        "store": "琥珀长廊样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品A",
+        "date": "2026-03-08",
+        "amount": 43597.4,
+        "qty": 566.2,
+        "net": 40981.56
+      },
+      {
+        "month": "2026-01",
+        "province": "示例省",
+        "store": "月栖街样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品B",
+        "date": "2026-01-06",
+        "amount": 13873.6,
+        "qty": 150.8,
+        "net": 13041.18
+      },
+      {
+        "month": "2026-02",
+        "province": "示例省",
+        "store": "月栖街样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品B",
+        "date": "2026-02-07",
+        "amount": 15787.2,
+        "qty": 171.6,
+        "net": 14839.97
+      },
+      {
+        "month": "2026-03",
+        "province": "示例省",
+        "store": "月栖街样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品B",
+        "date": "2026-03-08",
+        "amount": 18179.2,
+        "qty": 197.6,
+        "net": 17088.45
+      },
+      {
+        "month": "2026-01",
+        "province": "示例省",
+        "store": "晨雾里样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品B",
+        "date": "2026-01-06",
+        "amount": 16092.1,
+        "qty": 176.9,
+        "net": 15126.57
+      },
+      {
+        "month": "2026-02",
+        "province": "示例省",
+        "store": "晨雾里样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品B",
+        "date": "2026-02-07",
+        "amount": 18311.7,
+        "qty": 201.3,
+        "net": 17213
+      },
+      {
+        "month": "2026-03",
+        "province": "示例省",
+        "store": "晨雾里样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品B",
+        "date": "2026-03-08",
+        "amount": 21086.2,
+        "qty": 231.8,
+        "net": 19821.03
+      },
+      {
+        "month": "2026-01",
+        "province": "示例省",
+        "store": "澄光巷样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品B",
+        "date": "2026-01-06",
+        "amount": 11486.9,
+        "qty": 124.7,
+        "net": 10797.69
+      },
+      {
+        "month": "2026-02",
+        "province": "示例省",
+        "store": "澄光巷样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品B",
+        "date": "2026-02-07",
+        "amount": 13071.3,
+        "qty": 141.9,
+        "net": 12287.02
+      },
+      {
+        "month": "2026-03",
+        "province": "示例省",
+        "store": "澄光巷样例店",
+        "brand": "示例品牌A",
+        "product": "示例商品B",
+        "date": "2026-03-08",
+        "amount": 15051.8,
+        "qty": 163.4,
+        "net": 14148.69
+      },
+      {
+        "month": "2026-01",
+        "province": "示例省",
+        "store": "晴川坊样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品A",
+        "date": "2026-01-06",
+        "amount": 35327.8,
+        "qty": 698.9,
+        "net": 33208.13
+      },
+      {
+        "month": "2026-02",
+        "province": "示例省",
+        "store": "晴川坊样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品A",
+        "date": "2026-02-07",
+        "amount": 40200.6,
+        "qty": 795.3,
+        "net": 37788.56
+      },
+      {
+        "month": "2026-03",
+        "province": "示例省",
+        "store": "晴川坊样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品A",
+        "date": "2026-03-08",
+        "amount": 46291.6,
+        "qty": 915.8,
+        "net": 43514.1
+      },
+      {
+        "month": "2026-01",
+        "province": "示例省",
+        "store": "远帆路样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品A",
+        "date": "2026-01-06",
+        "amount": 33338.4,
+        "qty": 664.1,
+        "net": 31338.1
+      },
+      {
+        "month": "2026-02",
+        "province": "示例省",
+        "store": "远帆路样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品A",
+        "date": "2026-02-07",
+        "amount": 37936.8,
+        "qty": 755.7,
+        "net": 35660.59
+      },
+      {
+        "month": "2026-03",
+        "province": "示例省",
+        "store": "远帆路样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品A",
+        "date": "2026-03-08",
+        "amount": 43684.8,
+        "qty": 870.2,
+        "net": 41063.71
+      },
+      {
+        "month": "2026-01",
+        "province": "示例省",
+        "store": "北屿广场样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品A",
+        "date": "2026-01-06",
+        "amount": 30125.2,
+        "qty": 614.8,
+        "net": 28317.69
+      },
+      {
+        "month": "2026-02",
+        "province": "示例省",
+        "store": "北屿广场样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品A",
+        "date": "2026-02-07",
+        "amount": 34280.4,
+        "qty": 699.6,
+        "net": 32223.58
+      },
+      {
+        "month": "2026-03",
+        "province": "示例省",
+        "store": "北屿广场样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品A",
+        "date": "2026-03-08",
+        "amount": 39474.4,
+        "qty": 805.6,
+        "net": 37105.94
+      },
+      {
+        "month": "2026-01",
+        "province": "示例省",
+        "store": "青禾里样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品B",
+        "date": "2026-01-06",
+        "amount": 9059.6,
+        "qty": 220.4,
+        "net": 8516.02
+      },
+      {
+        "month": "2026-02",
+        "province": "示例省",
+        "store": "青禾里样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品B",
+        "date": "2026-02-07",
+        "amount": 10309.2,
+        "qty": 250.8,
+        "net": 9690.65
+      },
+      {
+        "month": "2026-03",
+        "province": "示例省",
+        "store": "青禾里样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品B",
+        "date": "2026-03-08",
+        "amount": 11871.2,
+        "qty": 288.8,
+        "net": 11158.93
+      },
+      {
+        "month": "2026-01",
+        "province": "示例省",
+        "store": "松岚街样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品B",
+        "date": "2026-01-06",
+        "amount": 8004,
+        "qty": 200.1,
+        "net": 7523.76
+      },
+      {
+        "month": "2026-02",
+        "province": "示例省",
+        "store": "松岚街样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品B",
+        "date": "2026-02-07",
+        "amount": 9108,
+        "qty": 227.7,
+        "net": 8561.52
+      },
+      {
+        "month": "2026-03",
+        "province": "示例省",
+        "store": "松岚街样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品B",
+        "date": "2026-03-08",
+        "amount": 10488,
+        "qty": 262.2,
+        "net": 9858.72
+      },
+      {
+        "month": "2026-01",
+        "province": "示例省",
+        "store": "东篱里样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品B",
+        "date": "2026-01-06",
+        "amount": 6420.6,
+        "qty": 156.6,
+        "net": 6035.36
+      },
+      {
+        "month": "2026-02",
+        "province": "示例省",
+        "store": "东篱里样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品B",
+        "date": "2026-02-07",
+        "amount": 7306.2,
+        "qty": 178.2,
+        "net": 6867.83
+      },
+      {
+        "month": "2026-03",
+        "province": "示例省",
+        "store": "东篱里样例店",
+        "brand": "示例品牌B",
+        "product": "示例商品B",
+        "date": "2026-03-08",
+        "amount": 8413.2,
+        "qty": 205.2,
+        "net": 7908.41
+      }
     ],
-    options: {
-      months: ["2026-01", "2026-02", "2026-03"],
-      provinces: ["示例省"],
-      stores: ["示例门店A", "示例门店B"],
-      brands: ["示例品牌A", "示例品牌B", "示例品牌C"]
+    "options": {
+      "months": [
+        "2026-01",
+        "2026-02",
+        "2026-03"
+      ],
+      "provinces": [
+        "示例省"
+      ],
+      "stores": [
+        "星河里样例店",
+        "云锦天地样例店",
+        "琥珀长廊样例店",
+        "月栖街样例店",
+        "晨雾里样例店",
+        "澄光巷样例店",
+        "晴川坊样例店",
+        "远帆路样例店",
+        "北屿广场样例店",
+        "青禾里样例店",
+        "松岚街样例店",
+        "东篱里样例店"
+      ],
+      "brands": [
+        "示例品牌A",
+        "示例品牌B",
+        "示例品牌C"
+      ]
     }
   },
-  provinceStoreSummary: [
-    {"province": "示例省", "store_count": 2, "sales_amount": 40950.0}
+  "provinceStoreSummary": [
+    {
+      "province": "示例省",
+      "store_count": 12,
+      "sales_amount": 931380
+    }
   ],
-  provinceMonthlySales: {
-    "示例省": [120000.0, 138000.0, 151500.0]
+  "provinceMonthlySales": {
+    "示例省": [
+      120000,
+      138000,
+      151500
+    ]
   },
-  nationalStoreRankings: [
-    {"store": "示例门店A", "rankings": {"2026-01": 1, "2026-02": 1, "2026-03": 1}, "trends": {"2026-01": {"direction": "new", "change": null}}}
+  "nationalStoreRankings": [
+    {
+      "store": "星河里样例店",
+      "rankings": {
+        "2026-01": 1,
+        "2026-02": 1,
+        "2026-03": 1
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "云锦天地样例店",
+      "rankings": {
+        "2026-01": 2,
+        "2026-02": 2,
+        "2026-03": 2
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "琥珀长廊样例店",
+      "rankings": {
+        "2026-01": 3,
+        "2026-02": 3,
+        "2026-03": 3
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "月栖街样例店",
+      "rankings": {
+        "2026-01": 1,
+        "2026-02": 1,
+        "2026-03": 1
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "晨雾里样例店",
+      "rankings": {
+        "2026-01": 2,
+        "2026-02": 2,
+        "2026-03": 2
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "澄光巷样例店",
+      "rankings": {
+        "2026-01": 3,
+        "2026-02": 3,
+        "2026-03": 3
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "晴川坊样例店",
+      "rankings": {
+        "2026-01": 1,
+        "2026-02": 1,
+        "2026-03": 1
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "远帆路样例店",
+      "rankings": {
+        "2026-01": 2,
+        "2026-02": 2,
+        "2026-03": 2
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    }
   ],
-  storeMetricsComparison: {
-    top10: { atv: 58.2, sku_coverage: 32, active_days_ratio: 72.0 },
-    all_stores: { atv: 54.6, sku_coverage: 40, active_days_ratio: 100.0 }
+  "storeMetricsComparison": {
+    "top10": {
+      "atv": 71.8,
+      "sku_coverage": 28,
+      "active_days_ratio": 84
+    },
+    "all_stores": {
+      "atv": 58.4,
+      "sku_coverage": 21,
+      "active_days_ratio": 67
+    }
   },
-  giniCoefficient: 0.21,
-  crConcentration: { cr3: 68.0, cr5: 83.0 },
-  newProductContributions: [
-    {"month": "2026-03", "month_total_sales": 151500.0, "month_total_qty": 3890.0, "new_products": [{"product": "示例新品A", "sales_amount": 12600.0, "sales_qty": 260.0}], "new_sales_amount": 12600.0, "new_sales_qty": 260.0, "amount_contribution": 8.32, "qty_contribution": 6.68, "new_product_count": 1}
+  "giniCoefficient": 0.21,
+  "crConcentration": {
+    "cr3": 68,
+    "cr5": 83
+  },
+  "newProductContributions": [
+    {
+      "month": "2026-03",
+      "month_total_sales": 151500,
+      "month_total_qty": 3890,
+      "new_products": [
+        {
+          "product": "示例新品A",
+          "sales_amount": 12600,
+          "sales_qty": 260
+        }
+      ],
+      "new_sales_amount": 12600,
+      "new_sales_qty": 260,
+      "amount_contribution": 8.32,
+      "qty_contribution": 6.68,
+      "new_product_count": 1
+    }
+  ],
+  "storeClassification": {
+    "star": [
+      {
+        "name": "星河里样例店",
+        "sales": 132720,
+        "qty": 1680,
+        "avgPrice": 79
+      },
+      {
+        "name": "云锦天地样例店",
+        "sales": 119350,
+        "qty": 1540,
+        "avgPrice": 77.5
+      },
+      {
+        "name": "琥珀长廊样例店",
+        "sales": 114730,
+        "qty": 1490,
+        "avgPrice": 77
+      }
+    ],
+    "potential": [
+      {
+        "name": "月栖街样例店",
+        "sales": 47840,
+        "qty": 520,
+        "avgPrice": 92
+      },
+      {
+        "name": "晨雾里样例店",
+        "sales": 55490,
+        "qty": 610,
+        "avgPrice": 90.97
+      },
+      {
+        "name": "澄光巷样例店",
+        "sales": 39610,
+        "qty": 430,
+        "avgPrice": 92.12
+      }
+    ],
+    "volume": [
+      {
+        "name": "晴川坊样例店",
+        "sales": 121820,
+        "qty": 2410,
+        "avgPrice": 50.55
+      },
+      {
+        "name": "远帆路样例店",
+        "sales": 114960,
+        "qty": 2290,
+        "avgPrice": 50.2
+      },
+      {
+        "name": "北屿广场样例店",
+        "sales": 103880,
+        "qty": 2120,
+        "avgPrice": 49
+      }
+    ],
+    "improve": [
+      {
+        "name": "青禾里样例店",
+        "sales": 31240,
+        "qty": 760,
+        "avgPrice": 41.11
+      },
+      {
+        "name": "松岚街样例店",
+        "sales": 27600,
+        "qty": 690,
+        "avgPrice": 40
+      },
+      {
+        "name": "东篱里样例店",
+        "sales": 22140,
+        "qty": 540,
+        "avgPrice": 41
+      }
+    ]
+  },
+  "storeScatterData": [
+    {
+      "x": 1680,
+      "y": 79,
+      "name": "星河里样例店",
+      "category": "star",
+      "color": "#4caf50"
+    },
+    {
+      "x": 1540,
+      "y": 77.5,
+      "name": "云锦天地样例店",
+      "category": "star",
+      "color": "#4caf50"
+    },
+    {
+      "x": 1490,
+      "y": 77,
+      "name": "琥珀长廊样例店",
+      "category": "star",
+      "color": "#4caf50"
+    },
+    {
+      "x": 520,
+      "y": 92,
+      "name": "月栖街样例店",
+      "category": "potential",
+      "color": "#2196f3"
+    },
+    {
+      "x": 610,
+      "y": 90.97,
+      "name": "晨雾里样例店",
+      "category": "potential",
+      "color": "#2196f3"
+    },
+    {
+      "x": 430,
+      "y": 92.12,
+      "name": "澄光巷样例店",
+      "category": "potential",
+      "color": "#2196f3"
+    },
+    {
+      "x": 2410,
+      "y": 50.55,
+      "name": "晴川坊样例店",
+      "category": "volume",
+      "color": "#ff9800"
+    },
+    {
+      "x": 2290,
+      "y": 50.2,
+      "name": "远帆路样例店",
+      "category": "volume",
+      "color": "#ff9800"
+    },
+    {
+      "x": 2120,
+      "y": 49,
+      "name": "北屿广场样例店",
+      "category": "volume",
+      "color": "#ff9800"
+    },
+    {
+      "x": 760,
+      "y": 41.11,
+      "name": "青禾里样例店",
+      "category": "improve",
+      "color": "#9e9e9e"
+    },
+    {
+      "x": 690,
+      "y": 40,
+      "name": "松岚街样例店",
+      "category": "improve",
+      "color": "#9e9e9e"
+    },
+    {
+      "x": 540,
+      "y": 41,
+      "name": "东篱里样例店",
+      "category": "improve",
+      "color": "#9e9e9e"
+    }
+  ],
+  "storeRankingChanges": [
+    {
+      "store": "星河里样例店",
+      "rankings": {
+        "2026-01": 1,
+        "2026-02": 1,
+        "2026-03": 1
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "云锦天地样例店",
+      "rankings": {
+        "2026-01": 2,
+        "2026-02": 2,
+        "2026-03": 2
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "琥珀长廊样例店",
+      "rankings": {
+        "2026-01": 3,
+        "2026-02": 3,
+        "2026-03": 3
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "月栖街样例店",
+      "rankings": {
+        "2026-01": 1,
+        "2026-02": 1,
+        "2026-03": 1
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "晨雾里样例店",
+      "rankings": {
+        "2026-01": 2,
+        "2026-02": 2,
+        "2026-03": 2
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "澄光巷样例店",
+      "rankings": {
+        "2026-01": 3,
+        "2026-02": 3,
+        "2026-03": 3
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "晴川坊样例店",
+      "rankings": {
+        "2026-01": 1,
+        "2026-02": 1,
+        "2026-03": 1
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "远帆路样例店",
+      "rankings": {
+        "2026-01": 2,
+        "2026-02": 2,
+        "2026-03": 2
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "北屿广场样例店",
+      "rankings": {
+        "2026-01": 3,
+        "2026-02": 3,
+        "2026-03": 3
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "青禾里样例店",
+      "rankings": {
+        "2026-01": 1,
+        "2026-02": 1,
+        "2026-03": 1
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "松岚街样例店",
+      "rankings": {
+        "2026-01": 2,
+        "2026-02": 2,
+        "2026-03": 2
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "store": "东篱里样例店",
+      "rankings": {
+        "2026-01": 3,
+        "2026-02": 3,
+        "2026-03": 3
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    }
+  ],
+  "inventoryData": [
+    {
+      "barcode": "EX-001",
+      "name": "示例慢销商品A",
+      "brand": "示例品牌A",
+      "inventory": 420,
+      "avgSales": 60,
+      "turnover": 7,
+      "risk": "high"
+    },
+    {
+      "barcode": "EX-002",
+      "name": "示例慢销商品B",
+      "brand": "示例品牌B",
+      "inventory": 260,
+      "avgSales": 82,
+      "turnover": 3.17,
+      "risk": "medium"
+    },
+    {
+      "barcode": "EX-003",
+      "name": "示例慢销商品C",
+      "brand": "示例品牌C",
+      "inventory": 180,
+      "avgSales": 74,
+      "turnover": 2.43,
+      "risk": "low"
+    }
+  ],
+  "storeConcentration": {
+    "labels": [
+      "Top5",
+      "Top10",
+      "Top15",
+      "Top20"
+    ],
+    "cumulative": [
+      64.8,
+      94.7,
+      100,
+      100
+    ]
+  },
+  "productConcentration": {
+    "labels": [
+      "Top5",
+      "Top10",
+      "Top20"
+    ],
+    "sales": [
+      62.4,
+      78.6,
+      91.2
+    ],
+    "cumulative": [
+      62.4,
+      78.6,
+      91.2
+    ]
+  },
+  "radarData": [
+    {
+      "label": "星河里样例店",
+      "data": [
+        100,
+        85.8,
+        69.7,
+        80,
+        65
+      ]
+    },
+    {
+      "label": "晴川坊样例店",
+      "data": [
+        91.8,
+        54.9,
+        100,
+        80,
+        65
+      ]
+    },
+    {
+      "label": "云锦天地样例店",
+      "data": [
+        89.9,
+        84.1,
+        63.9,
+        80,
+        65
+      ]
+    },
+    {
+      "label": "远帆路样例店",
+      "data": [
+        86.6,
+        54.5,
+        95,
+        80,
+        65
+      ]
+    },
+    {
+      "label": "琥珀长廊样例店",
+      "data": [
+        86.4,
+        83.6,
+        61.8,
+        80,
+        65
+      ]
+    }
+  ],
+  "brandMonthlyShares": [
+    {
+      "brand": "示例品牌A",
+      "2026-01": 48.3,
+      "2026-02": 46.4,
+      "2026-03": 45.1
+    },
+    {
+      "brand": "示例品牌B",
+      "2026-01": 31.2,
+      "2026-02": 32.7,
+      "2026-03": 33.8
+    },
+    {
+      "brand": "示例品牌C",
+      "2026-01": 20.5,
+      "2026-02": 20.9,
+      "2026-03": 21.1
+    }
+  ],
+  "productRankingChanges": [
+    {
+      "product": "示例商品A",
+      "rankings": {
+        "2026-01": 1,
+        "2026-02": 1,
+        "2026-03": 1
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    },
+    {
+      "product": "示例商品B",
+      "rankings": {
+        "2026-01": 2,
+        "2026-02": 2,
+        "2026-03": 2
+      },
+      "trends": {
+        "2026-01": {
+          "direction": "new",
+          "change": null
+        },
+        "2026-02": {
+          "direction": "stable",
+          "change": 0
+        },
+        "2026-03": {
+          "direction": "stable",
+          "change": 0
+        }
+      }
+    }
+  ],
+  "turnoverRatio": 2.21,
+  "storeAvgPriceData": [
+    {
+      "name": "澄光巷样例店",
+      "avgPrice": 92.12,
+      "qty": 430,
+      "sales": 39612
+    },
+    {
+      "name": "月栖街样例店",
+      "avgPrice": 92,
+      "qty": 520,
+      "sales": 47840
+    },
+    {
+      "name": "晨雾里样例店",
+      "avgPrice": 90.97,
+      "qty": 610,
+      "sales": 55492
+    },
+    {
+      "name": "星河里样例店",
+      "avgPrice": 79,
+      "qty": 1680,
+      "sales": 132720
+    },
+    {
+      "name": "云锦天地样例店",
+      "avgPrice": 77.5,
+      "qty": 1540,
+      "sales": 119350
+    },
+    {
+      "name": "琥珀长廊样例店",
+      "avgPrice": 77,
+      "qty": 1490,
+      "sales": 114730
+    },
+    {
+      "name": "晴川坊样例店",
+      "avgPrice": 50.55,
+      "qty": 2410,
+      "sales": 121826
+    },
+    {
+      "name": "远帆路样例店",
+      "avgPrice": 50.2,
+      "qty": 2290,
+      "sales": 114958
+    },
+    {
+      "name": "北屿广场样例店",
+      "avgPrice": 49,
+      "qty": 2120,
+      "sales": 103880
+    },
+    {
+      "name": "青禾里样例店",
+      "avgPrice": 41.11,
+      "qty": 760,
+      "sales": 31244
+    },
+    {
+      "name": "东篱里样例店",
+      "avgPrice": 41,
+      "qty": 540,
+      "sales": 22140
+    },
+    {
+      "name": "松岚街样例店",
+      "avgPrice": 40,
+      "qty": 690,
+      "sales": 27600
+    }
+  ],
+  "brandCumulativeData": [
+    62.1,
+    84.7,
+    100
+  ],
+  "brandCurrentData": [
+    45.1,
+    33.8,
+    21.1
+  ],
+  "dataSourceFiles": "示例销售数据_202601.xlsx, 示例销售数据_202602.xlsx, 示例销售数据_202603.xlsx, 示例库存数据_202603库存.xlsx",
+  "totalRecordsCount": 36,
+  "totalStoresLatestMonth": 12,
+  "monthlyStoreStats": [
+    {
+      "month": "2026-01",
+      "storeCount": 12,
+      "salesAmount": 176800,
+      "salesQty": 4230,
+      "avgPrice": 41.8
+    },
+    {
+      "month": "2026-02",
+      "storeCount": 12,
+      "salesAmount": 201300,
+      "salesQty": 4580,
+      "avgPrice": 44
+    },
+    {
+      "month": "2026-03",
+      "storeCount": 12,
+      "salesAmount": 231580,
+      "salesQty": 5010,
+      "avgPrice": 46.2
+    }
+  ],
+  "dataSourceItems": [
+    "示例销售数据_202601.xlsx",
+    "示例销售数据_202602.xlsx",
+    "示例销售数据_202603.xlsx",
+    "示例库存数据_202603库存.xlsx"
+  ],
+  "dataQuality": {
+    "totalRows": 36,
+    "totalFields": 14,
+    "keyCompleteness": 99.4,
+    "negativeAmount": 0,
+    "negativeQty": 0
+  },
+  "maxSlowItems": 20,
+  "brandOrder": [
+    "示例品牌A",
+    "示例品牌B",
+    "示例品牌C"
+  ],
+  "top20ProductsQty": [
+    {
+      "name": "示例商品A",
+      "value": 1860
+    },
+    {
+      "name": "示例商品B",
+      "value": 1420
+    },
+    {
+      "name": "示例商品C",
+      "value": 1180
+    },
+    {
+      "name": "示例商品D",
+      "value": 860
+    },
+    {
+      "name": "示例商品E",
+      "value": 620
+    }
   ]
 };
 
