@@ -4,6 +4,17 @@ Generate HTML business review reports from monthly sales and inventory Excel fil
 
 This repository contains the report pipeline, public template, and documentation. The public repo does not include real raw data or generated report output with business data.
 
+## Example Workflow
+
+```mermaid
+flowchart LR
+    A[Monthly Sales Excel] --> C[data_processor.py]
+    B[Inventory Excel] --> C[data_processor.py]
+    C --> D[analysis_data.json]
+    D --> E[create_final_report.py]
+    E --> F[HTML Business Review Report]
+```
+
 ## Features
 
 - Process monthly sales and inventory Excel files into structured analysis data
