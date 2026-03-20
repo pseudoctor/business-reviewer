@@ -1,0 +1,2773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Business Sales & Inventory Turnover Analysis Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+:root {
+  --primary: #1a237e;
+  --blue: #2196f3;
+  --green: #4caf50;
+  --red: #f44336;
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #6b7280;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+}
+.filter-lockbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.92);
+  color: #fff;
+  padding: 10px 24px;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.filter-lockbar .lock-title {
+  font-weight: 700;
+  color: #c7d2fe;
+}
+.filter-lockbar .lock-item {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+.header {
+  background: linear-gradient(135deg, var(--primary), #3949ab);
+  color: #fff;
+  padding: 48px 24px;
+}
+.header h1 {
+  margin: 0;
+  font-size: 34px;
+}
+.header-subtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0 16px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 12px;
+}
+.section-title .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+.section-title h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.subsection-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+  margin: 20px 0 12px;
+}
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.card h3 {
+  margin-top: 0;
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 600;
+}
+.kpi-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.kpi-card {
+  background: linear-gradient(135deg, rgba(26, 35, 126, 0.05), rgba(33, 150, 243, 0.05));
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+.kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.kpi-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.table th, .table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eef2f7;
+  text-align: left;
+}
+.table th {
+  background: #f8fafc;
+  font-weight: 600;
+  color: var(--primary);
+}
+.tag {
+  display: inline-block;
+  background: #e8eaf6;
+  color: #1a237e;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-right: 6px;
+}
+.risk-red { color: #fff; background: var(--red); padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+.risk-yellow { color: #fff; background: #f59e0b; padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+.risk-green { color: #fff; background: var(--green); padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+.chart-container {
+  height: 350px;
+  position: relative;
+}
+.chart-tall {
+  height: 400px;
+}
+.chart-wide {
+  height: 300px;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.footer-note {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 8px;
+}
+.brand-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 8px;
+}
+.brand-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.brand-tab:hover { color: #1a237e; }
+.brand-tab.active {
+  background: white;
+  color: #1a237e;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.bar-chart-container {
+  height: 500px;
+  overflow-y: auto;
+}
+.bar-chart-container canvas {
+  min-height: 400px;
+}
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.filter-field label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.filter-dropdown {
+  position: relative;
+}
+.filter-trigger {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+.filter-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 8px;
+  z-index: 20;
+  display: none;
+}
+.filter-panel.open {
+  display: block;
+}
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 4px 2px;
+}
+.filter-panel-actions {
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+.filter-option-meta {
+  color: #334155;
+  font-weight: 500;
+}
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+.filter-btn {
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.filter-kpis {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+.filter-kpi {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+.filter-kpi-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.filter-kpi-label {
+  font-size: 11px;
+  color: var(--muted);
+}
+@media (max-width: 1200px) {
+  .kpi-cards { grid-template-columns: repeat(2, 1fr); }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .filter-grid, .filter-kpis { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+<div class="filter-lockbar" id="filter-lockbar">
+  <span class="lock-title">筛选锁定</span>
+  <span class="lock-item" id="lockbar-month">时间：全部</span>
+  <span class="lock-item" id="lockbar-province">省份：全部</span>
+  <span class="lock-item" id="lockbar-store">门店：全部</span>
+  <span class="lock-item" id="lockbar-brand">品牌：全部</span>
+</div>
+<div class="header">
+  <h1>Business Sales & Inventory Turnover Analysis Report</h1>
+  <div class="header-subtitle" id="header-subtitle">数据周期：-- | 生成日期：--</div>
+</div>
+
+<div class="container">
+
+  <!-- 一、执行摘要 -->
+  <div class="section-title"><span class="dot"></span><h2>一、执行摘要</h2></div>
+
+  <!-- KPI卡片 -->
+  <div class="kpi-cards">
+    <div class="kpi-card">
+      <div class="kpi-value" id="kpi-sales-amount">--</div>
+      <div class="kpi-label">销售金额</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value" id="kpi-sales-qty">--</div>
+      <div class="kpi-label">销售数量</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value" id="kpi-avg-price">--</div>
+      <div class="kpi-label">客单价</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value" id="kpi-turnover">--</div>
+      <div class="kpi-label">库存周转率</div>
+    </div>
+  </div>
+  <div class="kpi-cards" style="margin-top:10px;">
+    <div class="kpi-card">
+      <div class="kpi-value" id="kpi-ytd-sales-amount">--</div>
+      <div class="kpi-label">本年迄今销售金额</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value" id="kpi-ytd-sales-qty">--</div>
+      <div class="kpi-label">本年迄今销售数量</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value" id="kpi-ytd-avg-price">--</div>
+      <div class="kpi-label">本年迄今客单价</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value" id="kpi-ytd-turnover">--</div>
+      <div class="kpi-label">本年迄今平均月度周转率</div>
+    </div>
+  </div>
+
+  <!-- 核心发现 -->
+  <div class="card">
+    <h3>核心发现</h3>
+    <ul style="margin: 8px 0 0 0; padding-left: 20px; line-height: 2;">
+      <li><b>数据概览：</b>总数据量<span id="insight-total-records">--</span>条，覆盖<span id="insight-total-stores">--</span>家门店，<span id="insight-total-brands">--</span>个品牌，慢销品<span id="insight-slow-items">--</span>个</li>
+      <li><b>销售趋势：</b><span id="insight-months-range">--</span>总销售金额¥<span id="insight-total-amount">--</span>，<span id="insight-peak-month">--</span>达到峰值¥<span id="insight-peak-amount">--</span></li>
+      <li><b>品牌集中度：</b>CR3达<span id="insight-cr3">--</span>%，头部品牌优势明显</li>
+      <li><b>门店贡献：</b>TOP10门店贡献<span id="insight-top10-share">--</span>%，TOP20门店贡献<span id="insight-top20-share">--</span>%</li>
+      <li><b>库存风险：</b>库存周转率<span id="insight-turnover">--</span>，慢销品<span id="insight-slow-items-2">--</span>个</li>
+    </ul>
+  </div>
+
+  <div class="card" id="crossFilterCard">
+    <h3>交叉筛选（时间 × 省份 × 门店 × 品牌）</h3>
+    <div class="filter-grid">
+      <div class="filter-field">
+        <label for="filter-month-trigger">时间</label>
+        <div class="filter-dropdown" id="filter-month-dropdown">
+          <button type="button" class="filter-trigger" id="filter-month-trigger">全部</button>
+          <div class="filter-panel" id="filter-month-options"></div>
+        </div>
+      </div>
+      <div class="filter-field">
+        <label for="filter-province-trigger">省份</label>
+        <div class="filter-dropdown" id="filter-province-dropdown">
+          <button type="button" class="filter-trigger" id="filter-province-trigger">全部</button>
+          <div class="filter-panel" id="filter-province-options"></div>
+        </div>
+      </div>
+      <div class="filter-field">
+        <label for="filter-store-trigger">门店</label>
+        <div class="filter-dropdown" id="filter-store-dropdown">
+          <button type="button" class="filter-trigger" id="filter-store-trigger">全部</button>
+          <div class="filter-panel" id="filter-store-options"></div>
+        </div>
+      </div>
+      <div class="filter-field">
+        <label for="filter-brand-trigger">品牌</label>
+        <div class="filter-dropdown" id="filter-brand-dropdown">
+          <button type="button" class="filter-trigger" id="filter-brand-trigger">全部</button>
+          <div class="filter-panel" id="filter-brand-options"></div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button class="filter-btn" id="filter-reset-btn">重置为全部</button>
+    </div>
+    <div id="filter-current-scope" style="margin-bottom:10px;color:var(--muted);font-size:12px;">当前筛选：全部</div>
+    <div class="filter-kpis">
+      <div class="filter-kpi">
+        <div class="filter-kpi-value" id="cf-sales-amount">--</div>
+        <div class="filter-kpi-label">销售金额</div>
+      </div>
+      <div class="filter-kpi">
+        <div class="filter-kpi-value" id="cf-sales-qty">--</div>
+        <div class="filter-kpi-label">销售数量</div>
+      </div>
+      <div class="filter-kpi">
+        <div class="filter-kpi-value" id="cf-sales-net">--</div>
+        <div class="filter-kpi-label">销售净额</div>
+      </div>
+      <div class="filter-kpi">
+        <div class="filter-kpi-value" id="cf-avg-price">--</div>
+        <div class="filter-kpi-label">客单价</div>
+      </div>
+      <div class="filter-kpi">
+        <div class="filter-kpi-value" id="cf-records">--</div>
+        <div class="filter-kpi-label">记录数</div>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:12px;">
+      <div>
+        <h3 style="margin-bottom:6px;">筛选后Top10商品（按销售额）</h3>
+        <table class="table">
+          <thead><tr><th>商品</th><th>销售额</th></tr></thead>
+          <tbody id="cf-top-products"></tbody>
+        </table>
+      </div>
+      <div>
+        <h3 style="margin-bottom:6px;">筛选后Top10门店（按销售额）</h3>
+        <table class="table">
+          <thead><tr><th>门店</th><th>销售额</th></tr></thead>
+          <tbody id="cf-top-stores"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 二、维度分析 -->
+  <div class="section-title"><span class="dot"></span><h2>二、维度分析</h2></div>
+
+  <!-- （一）时间序列分析 -->
+  <h3 class="subsection-title">（一）时间序列分析</h3>
+
+  <!-- 月度销售金额 -->
+  <div class="card">
+    <h3>月度销售金额趋势</h3>
+    <div class="chart-container"><canvas id="monthlySalesChart"></canvas></div>
+  </div>
+
+  <!-- 日销售金额 -->
+  <div class="card">
+    <h3>日销售金额趋势</h3>
+    <div class="chart-container"><canvas id="dailySalesChart"></canvas></div>
+  </div>
+
+  <!-- 品牌月度堆叠柱状图 -->
+  <div class="card">
+    <h3>各品牌月度销售金额对比</h3>
+    <div class="chart-container"><canvas id="brandMonthlyStacked"></canvas></div>
+  </div>
+
+  <!-- 销售数量月度曲线 -->
+  <div class="card">
+    <h3>销售数量月度趋势</h3>
+    <div class="chart-container"><canvas id="qtyMonthlyChart"></canvas></div>
+  </div>
+
+  <!-- 月度门店统计表 -->
+  <div class="card">
+    <h3>近12个月门店覆盖与客单价</h3>
+    <div style="overflow-x:auto;">
+      <table class="table" style="min-width:720px;">
+        <thead id="monthlyStoreStatsHead">
+          <!-- 动态生成表头 -->
+        </thead>
+        <tbody id="monthlyStoreStatsTable">
+          <!-- 动态生成数据 -->
+        </tbody>
+        <tfoot id="monthlyStoreStatsFoot">
+          <!-- 动态生成合计 -->
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- （二）维度对比分析 -->
+  <h3 class="subsection-title">（二）维度对比分析</h3>
+
+  <!-- 品牌产品维度分析 -->
+  <h4 style="color:var(--primary);margin:16px 0 12px;">1. 品牌产品维度分析</h4>
+
+  <!-- 品牌销售明细 -->
+  <div class="card">
+    <h3>各品牌销售金额和销售数量</h3>
+    <div class="brand-tabs">
+      <button class="brand-tab active" data-tab="cumulative">迄今累计</button>
+      <button class="brand-tab" data-tab="current" id="brand-current-tab">本月 (--)</button>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>品牌</th>
+          <th>销售金额</th>
+          <th>销售数量</th>
+          <th>金额占比</th>
+          <th>数量占比</th>
+        </tr>
+      </thead>
+      <tbody id="brand-cumulative-body">
+        <tr>
+          <td><span class="tag" style="background:#dbeafe;color:#1e40af;">伊利</span></td>
+          <td>¥1,047,638</td>
+          <td>12,954</td>
+          <td>75.5%</td>
+          <td>55.0%</td>
+        </tr>
+        <tr>
+          <td><span class="tag" style="background:#fef3c7;color:#92400e;">秦俑</span></td>
+          <td>¥173,995</td>
+          <td>7,008</td>
+          <td>12.5%</td>
+          <td>29.7%</td>
+        </tr>
+        <tr>
+          <td><span class="tag" style="background:#d1fae5;color:#065f46;">君乐宝</span></td>
+          <td>¥157,848</td>
+          <td>3,566</td>
+          <td>11.4%</td>
+          <td>15.1%</td>
+        </tr>
+        <tr>
+          <td><span class="tag" style="background:#fce7f3;color:#9d174d;">佳贝艾特</span></td>
+          <td>¥9,026</td>
+          <td>42</td>
+          <td>0.7%</td>
+          <td>0.2%</td>
+        </tr>
+      </tbody>
+      <tbody id="brand-current-body" style="display:none;">
+        <tr>
+          <td><span class="tag" style="background:#dbeafe;color:#1e40af;">伊利</span></td>
+          <td>¥449,862</td>
+          <td>6,542</td>
+          <td>78.2%</td>
+          <td>60.4%</td>
+        </tr>
+        <tr>
+          <td><span class="tag" style="background:#fef3c7;color:#92400e;">秦俑</span></td>
+          <td>¥67,075</td>
+          <td>2,932</td>
+          <td>11.7%</td>
+          <td>27.1%</td>
+        </tr>
+        <tr>
+          <td><span class="tag" style="background:#d1fae5;color:#065f46;">君乐宝</span></td>
+          <td>¥56,339</td>
+          <td>1,346</td>
+          <td>9.8%</td>
+          <td>12.4%</td>
+        </tr>
+        <tr>
+          <td><span class="tag" style="background:#fce7f3;color:#9d174d;">佳贝艾特</span></td>
+          <td>¥1,896</td>
+          <td>9</td>
+          <td>0.3%</td>
+          <td>0.1%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 品牌占比饼图 -->
+  <div class="grid-2">
+    <div class="card">
+      <h3>品牌销售金额占比</h3>
+      <div class="chart-container"><canvas id="brandPieChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>品牌销售数量占比</h3>
+      <div class="chart-container"><canvas id="brandQtyPieChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 品牌销售数量柱状图 -->
+  <div class="card">
+    <h3>品牌销售数量对比</h3>
+    <div class="chart-container"><canvas id="brandQtyBarChart"></canvas></div>
+  </div>
+
+  <!-- 品牌月度占比变化 -->
+  <div class="card">
+    <h3>品牌月度占比变化</h3>
+    <table class="table">
+      <thead id="brandMonthlySharesHead">
+        <!-- 动态生成表头 -->
+      </thead>
+      <tbody id="brandMonthlySharesTable">
+        <!-- 动态生成数据 -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Top20产品销售金额条形图 -->
+  <div class="card">
+    <h3>Top 20产品销售金额</h3>
+    <div class="bar-chart-container"><canvas id="top20ProductsChart"></canvas></div>
+  </div>
+
+  <!-- Top20产品销售数量条形图 -->
+  <div class="card">
+    <h3>Top 20产品销售数量</h3>
+    <div class="bar-chart-container"><canvas id="top20ProductsQtyChart"></canvas></div>
+  </div>
+
+  <!-- Top30产品排名变化 -->
+  <div class="card">
+    <h3>Top 30产品排名变化</h3>
+    <table class="table">
+      <thead id="top30ProductsTableHead">
+        <!-- 动态生成表头 -->
+      </thead>
+      <tbody id="top30ProductsTable">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 新品贡献分析 -->
+  <div class="card">
+    <h3>新品贡献分析</h3>
+    <div id="newProductContributionsContainer">
+      <!-- 动态生成每月新品贡献表 -->
+    </div>
+  </div>
+
+  <!-- 热销产品稳定性 -->
+  <div class="card">
+    <h3>热销产品稳定性 (TOP 10)</h3>
+    <div class="chart-container"><canvas id="productStabilityChart"></canvas></div>
+    <table class="table" style="margin-top:16px;">
+      <thead>
+        <tr>
+          <th>产品</th>
+          <th>进入Top10月数</th>
+          <th>Top10内销售额</th>
+        </tr>
+      </thead>
+      <tbody id="productStabilityTable">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 门店维度分析 -->
+  <h4 style="color:var(--primary);margin:24px 0 12px;">2. 门店维度分析</h4>
+
+  <!-- Top20门店销售金额 -->
+  <div class="card">
+    <h3>Top 20门店销售金额</h3>
+    <div class="bar-chart-container"><canvas id="top20StoresChart"></canvas></div>
+  </div>
+
+  <!-- Top10门店表现 -->
+  <div class="card">
+    <h3>Top 10门店表现</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>门店</th>
+          <th>销售金额</th>
+          <th>占比</th>
+        </tr>
+      </thead>
+      <tbody id="top10StoresTable">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Top30门店排名变化 -->
+  <div class="card">
+    <h3>Top 30门店排名变化</h3>
+    <div style="max-height:400px;overflow-y:auto;">
+      <table class="table">
+        <thead id="top30StoresTableHead">
+          <!-- 动态生成表头 -->
+        </thead>
+        <tbody id="top30StoresTable">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Top20门店稳定性 -->
+  <div class="card">
+    <h3>Top 20门店稳定性 (进入Top20月数)</h3>
+    <div class="chart-container"><canvas id="storeStabilityChart"></canvas></div>
+    <table class="table" style="margin-top:16px;">
+      <thead>
+        <tr>
+          <th>门店</th>
+          <th>进入Top20月数</th>
+          <th>Top20内销售额</th>
+        </tr>
+      </thead>
+      <tbody id="storeStabilityTable">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 门店分类点阵图 -->
+  <div class="card">
+    <h3>门店分类点阵图（销售额×客单价）</h3>
+    <div class="chart-container"><canvas id="storeScatterChart"></canvas></div>
+    <div class="grid-2" style="margin-top:12px;">
+      <div class="card" style="box-shadow:none;border:1px solid #eef2f7;">
+        <h3>明星门店（高销量+高客单价）</h3>
+        <div id="star-stores" style="font-size:12px;color:#475569;"></div>
+      </div>
+      <div class="card" style="box-shadow:none;border:1px solid #eef2f7;">
+        <h3>潜力门店（低销量+高客单价）</h3>
+        <div id="potential-stores" style="font-size:12px;color:#475569;"></div>
+      </div>
+      <div class="card" style="box-shadow:none;border:1px solid #eef2f7;">
+        <h3>走量门店（高销量+低客单价）</h3>
+        <div id="volume-stores" style="font-size:12px;color:#475569;"></div>
+      </div>
+      <div class="card" style="box-shadow:none;border:1px solid #eef2f7;">
+        <h3>待提升门店（低销量+低客单价）</h3>
+        <div id="improve-stores" style="font-size:12px;color:#475569;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top5门店效率雷达图 -->
+  <div class="card">
+    <h3>Top 5门店效率雷达图</h3>
+    <div class="chart-tall"><canvas id="storeRadarChart"></canvas></div>
+  </div>
+
+  <!-- （三）交叉分析 -->
+  <h3 class="subsection-title">（三）交叉分析</h3>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>品牌×门店Top10组合</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>品牌</th>
+            <th>门店</th>
+            <th>销售金额</th>
+          </tr>
+        </thead>
+        <tbody id="brandStoreCombo">
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>高效门店特征对比（TOP10 vs 全店均值）</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>指标</th>
+            <th>TOP10</th>
+            <th>全店均值</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>客单价</td>
+            <td>61.70</td>
+            <td>61.62</td>
+          </tr>
+          <tr>
+            <td>SKU覆盖率</td>
+            <td>98.0%</td>
+            <td>81.0%</td>
+          </tr>
+          <tr>
+            <td>动销天数占比</td>
+            <td>91.5%</td>
+            <td>74.5%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- （四）结构与集中度分析 -->
+  <h3 class="subsection-title">（四）结构与集中度分析</h3>
+
+  <div class="grid-3">
+    <div class="card">
+      <h3>品牌集中度</h3>
+      <p><b>CR3：</b>99.3%</p>
+      <p><b>CR5：</b>100.0%</p>
+    </div>
+    <div class="card">
+      <h3>SKU集中度</h3>
+      <p><b>Top20产品占比：</b>83.5%</p>
+    </div>
+    <div class="card">
+      <h3>门店集中度</h3>
+      <p><b>Top10门店占比：</b>35.3%</p>
+      <p><b>Top20门店占比：</b>59.5%</p>
+      <p><b>Gini系数：</b>0.37</p>
+    </div>
+  </div>
+
+  <!-- 集中度可视化图表 -->
+  <div class="grid-2">
+    <div class="card">
+      <h3>产品销售额集中度</h3>
+      <div class="chart-container"><canvas id="productConcentrationChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>门店销售额分布（累计占比）</h3>
+      <div class="chart-container"><canvas id="storeConcentrationChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 三、库存风险分析 -->
+  <div class="section-title"><span class="dot"></span><h2>三、库存风险分析</h2></div>
+
+  <!-- 库存周转概览 -->
+  <div class="card">
+    <h3>库存周转概览</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>商品名称</th>
+          <th>库存数量</th>
+          <th>过往3月月均销售</th>
+          <th>库存/销售比</th>
+        </tr>
+      </thead>
+      <tbody id="inventoryOverviewTable">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 风险预警表 -->
+  <div class="card">
+    <h3>风险预警表（高库存低周转）</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>商品条码</th>
+          <th>商品名称</th>
+          <th>品牌</th>
+          <th>库存</th>
+          <th>月均销售</th>
+          <th>库存周转</th>
+          <th>风险等级</th>
+        </tr>
+      </thead>
+      <tbody id="riskWarningTable">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 四、附录 -->
+  <div class="section-title"><span class="dot"></span><h2>四、附录</h2></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>数据来源</h3>
+      <ul id="appendix-data-sources">
+      </ul>
+    </div>
+    <div class="card">
+      <h3>数据质量</h3>
+      <table class="table">
+        <tr>
+          <td>数据量</td>
+          <td id="appendix-total-rows">--</td>
+        </tr>
+        <tr>
+          <td>字段数</td>
+          <td id="appendix-total-fields">--</td>
+        </tr>
+        <tr>
+          <td>关键字段完整性</td>
+          <td id="appendix-key-completeness">--</td>
+        </tr>
+        <tr>
+          <td>异常数据</td>
+          <td id="appendix-negative-values">--</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer-note" style="text-align:center;margin-top:20px;">
+    报告仅基于原始数据客观呈现，不包含业务建议。
+  </div>
+</div>
+
+<script>
+const chartData = {
+  monthlySales: [120000.0, 138000.0, 151500.0],
+  monthlyQty: [3200.0, 3560.0, 3890.0],
+  months: ["2026-01", "2026-02", "2026-03"],
+  dailySales: [
+    {"date": "2026-01-05", "value": 4200.0},
+    {"date": "2026-02-05", "value": 4680.0},
+    {"date": "2026-03-05", "value": 5120.0}
+  ],
+  brandMonthlyStacked: {
+    "示例品牌A": [58000.0, 64000.0, 70200.0],
+    "示例品牌B": [39000.0, 45100.0, 48700.0],
+    "示例品牌C": [23000.0, 28900.0, 32600.0]
+  },
+  brandShares: [46.3, 32.1, 21.6],
+  brandQtyShares: [44.0, 34.0, 22.0],
+  brandQty: [4700, 3600, 2300],
+  top20Products: [
+    {"name": "示例商品A", "value": 52100},
+    {"name": "示例商品B", "value": 43800},
+    {"name": "示例商品C", "value": 39200}
+  ],
+  top20Stores: [
+    {"name": "示例门店A", "value": 30100},
+    {"name": "示例门店B", "value": 28750},
+    {"name": "示例门店C", "value": 25420}
+  ],
+  productStability: [
+    {"name": "示例商品A", "months": 3, "sales": 52100},
+    {"name": "示例商品B", "months": 2, "sales": 43800}
+  ],
+  storeStability: [
+    {"name": "示例门店A", "months": 3, "sales": 30100},
+    {"name": "示例门店B", "months": 2, "sales": 28750}
+  ],
+  overviewTable: [
+    {"month": "2026-01", "rows": 1200, "stores": 18, "skus": 42, "sales_amount": 120000.0, "sales_qty": 3200.0, "sales_net": 113000.0},
+    {"month": "2026-02", "rows": 1280, "stores": 19, "skus": 45, "sales_amount": 138000.0, "sales_qty": 3560.0, "sales_net": 129400.0},
+    {"month": "2026-03", "rows": 1360, "stores": 21, "skus": 47, "sales_amount": 151500.0, "sales_qty": 3890.0, "sales_net": 142600.0}
+  ],
+  insights: [
+    {"type": "growth", "text": "示例数据中月销售额持续增长。"},
+    {"type": "brand", "text": "示例品牌A 保持领先。"}
+  ],
+  inventory: {
+    total_qty: 8600,
+    jan_sales_qty: 3890,
+    turnover_ratio: 2.21,
+    risk_thresholds: { high: 3.0, medium: 1.5 },
+    risk_counts: { high: 2, medium: 3, low: 15 },
+    slow_items: [
+      {"商品名称": "示例慢销商品A", "库存数量": 420, "1月销售数量": 60, "库存销售比": 7.0, "risk_level": "high"}
+    ]
+  },
+  reportMeta: {
+    generatedAt: "2026-03-20 00:00:00",
+    monthRange: "2026-01 至 2026-03",
+    latestMonth: "2026-03"
+  },
+  crossFilter: {
+    records: [
+      {"month": "2026-01", "province": "示例省", "store": "示例门店A", "brand": "示例品牌A", "product": "示例商品A", "date": "2026-01-05", "amount": 4200.0, "qty": 120.0, "net": 3960.0}
+    ],
+    options: {
+      months: ["2026-01", "2026-02", "2026-03"],
+      provinces: ["示例省"],
+      stores: ["示例门店A", "示例门店B"],
+      brands: ["示例品牌A", "示例品牌B", "示例品牌C"]
+    }
+  },
+  provinceStoreSummary: [
+    {"province": "示例省", "store_count": 2, "sales_amount": 40950.0}
+  ],
+  provinceMonthlySales: {
+    "示例省": [120000.0, 138000.0, 151500.0]
+  },
+  nationalStoreRankings: [
+    {"store": "示例门店A", "rankings": {"2026-01": 1, "2026-02": 1, "2026-03": 1}, "trends": {"2026-01": {"direction": "new", "change": null}}}
+  ],
+  storeMetricsComparison: {
+    top10: { atv: 58.2, sku_coverage: 32, active_days_ratio: 72.0 },
+    all_stores: { atv: 54.6, sku_coverage: 40, active_days_ratio: 100.0 }
+  },
+  giniCoefficient: 0.21,
+  crConcentration: { cr3: 68.0, cr5: 83.0 },
+  newProductContributions: [
+    {"month": "2026-03", "month_total_sales": 151500.0, "month_total_qty": 3890.0, "new_products": [{"product": "示例新品A", "sales_amount": 12600.0, "sales_qty": 260.0}], "new_sales_amount": 12600.0, "new_sales_qty": 260.0, "amount_contribution": 8.32, "qty_contribution": 6.68, "new_product_count": 1}
+  ]
+};
+
+function fmtNum(value) {
+  return Number(value || 0).toLocaleString('zh-CN', {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1
+  });
+}
+
+function fmtMoney(value) {
+  return `¥${fmtNum(value)}`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function parseYearMonthLabel(label) {
+  const match = String(label || '').match(/^(\d{4})-(\d{2})$/);
+  if (!match) return null;
+  return { year: match[1], month: match[2] };
+}
+
+function buildYoYLineData(monthLabels, values) {
+  const parsedRows = monthLabels.map((label, idx) => {
+    const parsed = parseYearMonthLabel(label);
+    if (!parsed) return null;
+    return { year: parsed.year, month: parsed.month, value: Number(values[idx] || 0) };
+  }).filter(Boolean);
+
+  const years = Array.from(new Set(parsedRows.map((x) => x.year))).sort();
+  if (years.length < 2) return null;
+
+  const yearMonthMap = new Map();
+  years.forEach((year) => yearMonthMap.set(year, new Map()));
+  parsedRows.forEach((row) => {
+    yearMonthMap.get(row.year).set(row.month, row.value);
+  });
+
+  const uniqueMonths = Array.from(new Set(parsedRows.map((x) => x.month)))
+    .sort((a, b) => Number(a) - Number(b));
+  if (uniqueMonths.length < 1) return null;
+
+  const yoyPalette = ['#1a237e', '#4caf50', '#f59e0b', '#e91e63', '#00acc1', '#8e24aa'];
+  const labels = uniqueMonths.map((month) => `${Number(month)}月`);
+  const datasets = years.map((year, idx) => ({
+    label: `${year}年`,
+    data: uniqueMonths.map((month) => {
+      const val = yearMonthMap.get(year).get(month);
+      return val == null ? null : Number(val);
+    }),
+    borderColor: yoyPalette[idx % yoyPalette.length],
+    backgroundColor: 'transparent',
+    tension: 0.3,
+    fill: false,
+    spanGaps: false,
+  }));
+
+  return { labels, datasets };
+}
+
+function buildTrendLineChartData(monthLabels, values, singleLabel, singleColor, singleFillColor) {
+  const yoyData = buildYoYLineData(monthLabels, values);
+  if (yoyData) return yoyData;
+
+  return {
+    labels: monthLabels,
+    datasets: [{
+      label: singleLabel,
+      data: values,
+      borderColor: singleColor,
+      backgroundColor: singleFillColor,
+      tension: 0.35,
+      fill: true,
+    }],
+  };
+}
+
+function parseYmdLabel(label) {
+  const match = String(label || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+  return {
+    year: match[1],
+    month: match[2],
+    day: match[3],
+    md: `${match[2]}-${match[3]}`,
+    order: month * 100 + day,
+  };
+}
+
+function buildDailyYoYLineData(dailyItems) {
+  const parsedRows = (dailyItems || []).map((item) => {
+    const parsed = parseYmdLabel(item.date);
+    if (!parsed) return null;
+    return {
+      year: parsed.year,
+      md: parsed.md,
+      order: parsed.order,
+      value: Number(item.value || 0),
+    };
+  }).filter(Boolean);
+
+  const years = Array.from(new Set(parsedRows.map((x) => x.year))).sort();
+  if (years.length < 2) return null;
+
+  const yearDayMap = new Map();
+  years.forEach((year) => yearDayMap.set(year, new Map()));
+  parsedRows.forEach((row) => {
+    const dayMap = yearDayMap.get(row.year);
+    dayMap.set(row.md, (dayMap.get(row.md) || 0) + row.value);
+  });
+
+  const dayOrderMap = new Map();
+  parsedRows.forEach((row) => dayOrderMap.set(row.md, row.order));
+  const uniqueDays = Array.from(dayOrderMap.keys())
+    .sort((a, b) => (dayOrderMap.get(a) || 0) - (dayOrderMap.get(b) || 0));
+  if (uniqueDays.length < 1) return null;
+
+  const yoyPalette = ['#2196f3', '#43a047', '#fb8c00', '#8e24aa', '#00897b', '#3949ab'];
+  const labels = uniqueDays.map((md) => {
+    const [m, d] = md.split('-');
+    return `${Number(m)}月${Number(d)}日`;
+  });
+  const datasets = years.map((year, idx) => ({
+    label: `${year}年`,
+    data: uniqueDays.map((md) => {
+      const val = yearDayMap.get(year).get(md);
+      return val == null ? null : Number(val);
+    }),
+    borderColor: yoyPalette[idx % yoyPalette.length],
+    backgroundColor: 'transparent',
+    tension: 0.2,
+    fill: false,
+    spanGaps: false,
+    pointRadius: 0,
+  }));
+
+  return { labels, datasets };
+}
+
+function buildDailyTrendChartData(dailyItems) {
+  const yoyData = buildDailyYoYLineData(dailyItems);
+  if (yoyData) return yoyData;
+
+  const items = dailyItems || [];
+  return {
+    labels: items.map((x) => x.date),
+    datasets: [{
+      label: '日销售金额',
+      data: items.map((x) => Number(x.value || 0)),
+      borderColor: '#2196f3',
+      backgroundColor: 'rgba(33, 150, 243, 0.1)',
+      tension: 0.2,
+      fill: true,
+      pointRadius: 0,
+    }],
+  };
+}
+
+function updateReportMetaDisplay() {
+  const meta = chartData.reportMeta || {};
+  const subtitle = document.getElementById('header-subtitle');
+  const currentTab = document.getElementById('brand-current-tab');
+
+  const fallbackStart = chartData.months && chartData.months.length > 0 ? chartData.months[0] : '--';
+  const fallbackEnd = chartData.months && chartData.months.length > 0 ? chartData.months[chartData.months.length - 1] : '--';
+  const periodText = meta.period || `${fallbackStart}-${fallbackEnd}`;
+  const generatedDate = meta.generatedDate || new Date().toISOString().slice(0, 10);
+  const latestMonth = meta.latestMonth || fallbackEnd;
+
+  if (subtitle) {
+    subtitle.textContent = `数据周期：${periodText} | 生成日期：${generatedDate}`;
+  }
+  if (currentTab) {
+    currentTab.textContent = `本月 (${latestMonth})`;
+  }
+}
+
+// 更新KPI卡片
+function updateKPIs() {
+  const totalSalesAmount = chartData.monthlySales.reduce((a, b) => a + b, 0);
+  const totalSalesQty = chartData.monthlyQty.reduce((a, b) => a + b, 0);
+  const avgPrice = totalSalesQty > 0 ? totalSalesAmount / totalSalesQty : 0;
+  const turnoverRate = chartData.turnoverRatio || 0;
+  const latestMonth = ((chartData.reportMeta || {}).latestMonth) || (chartData.months[chartData.months.length - 1] || '');
+  const latestParsed = parseYearMonthLabel(latestMonth);
+  const targetYear = latestParsed ? latestParsed.year : null;
+  let ytdSalesAmount = 0;
+  let ytdSalesQty = 0;
+  if (targetYear) {
+    (chartData.months || []).forEach((month, idx) => {
+      const parsed = parseYearMonthLabel(month);
+      if (parsed && parsed.year === targetYear) {
+        ytdSalesAmount += Number(chartData.monthlySales[idx] || 0);
+        ytdSalesQty += Number(chartData.monthlyQty[idx] || 0);
+      }
+    });
+  }
+  const ytdAvgPrice = ytdSalesQty > 0 ? ytdSalesAmount / ytdSalesQty : 0;
+  const totalInventory = (chartData.inventoryData || []).reduce((sum, item) => sum + Number(item.inventory || 0), 0);
+  let ytdTurnover = 0;
+  if (totalInventory > 0 && targetYear) {
+    const ytdMonthlyTurnovers = (chartData.months || []).map((month, idx) => {
+      const parsed = parseYearMonthLabel(month);
+      if (!parsed || parsed.year !== targetYear) return null;
+      return Number(chartData.monthlyQty[idx] || 0) / totalInventory;
+    }).filter((x) => x != null);
+    ytdTurnover = ytdMonthlyTurnovers.length > 0
+      ? (ytdMonthlyTurnovers.reduce((a, b) => a + b, 0) / ytdMonthlyTurnovers.length)
+      : 0;
+  }
+
+  document.getElementById('kpi-sales-amount').textContent = fmtNum(totalSalesAmount);
+  document.getElementById('kpi-sales-qty').textContent = fmtNum(totalSalesQty);
+  document.getElementById('kpi-avg-price').textContent = fmtNum(avgPrice);
+  document.getElementById('kpi-turnover').textContent = fmtNum(turnoverRate);
+  document.getElementById('kpi-ytd-sales-amount').textContent = fmtNum(ytdSalesAmount);
+  document.getElementById('kpi-ytd-sales-qty').textContent = fmtNum(ytdSalesQty);
+  document.getElementById('kpi-ytd-avg-price').textContent = fmtNum(ytdAvgPrice);
+  document.getElementById('kpi-ytd-turnover').textContent = fmtNum(ytdTurnover);
+}
+
+// 更新核心发现
+function updateInsights() {
+  document.getElementById('insight-total-records').textContent = chartData.totalRecordsCount.toLocaleString();
+  document.getElementById('insight-total-stores').textContent = chartData.totalStoresLatestMonth;
+  document.getElementById('insight-total-brands').textContent = Object.keys(chartData.brandMonthlyStacked).length;
+  document.getElementById('insight-slow-items').textContent = fmtNum(chartData.inventoryData.length);
+
+  const totalAmount = chartData.monthlySales.reduce((a, b) => a + b, 0);
+  const peakAmount = Math.max(...chartData.monthlySales);
+  const peakIndex = chartData.monthlySales.indexOf(peakAmount);
+  const peakMonth = chartData.months[peakIndex];
+
+  const firstMonth = chartData.months[0];
+  const lastMonth = chartData.months[chartData.months.length - 1];
+  const monthsRange = `${firstMonth} 至 ${lastMonth}`;
+
+  document.getElementById('insight-months-range').textContent = monthsRange;
+  document.getElementById('insight-total-amount').textContent = totalAmount.toLocaleString();
+  document.getElementById('insight-peak-month').textContent = peakMonth;
+  document.getElementById('insight-peak-amount').textContent = peakAmount.toLocaleString();
+
+  const brandShares = chartData.brandShares;
+  const cr3 = brandShares.slice(0, 3).reduce((a, b) => a + b, 0);
+  document.getElementById('insight-cr3').textContent = cr3.toFixed(1);
+
+  const storeConcentration = ((chartData.storeConcentration || {}).cumulative || []);
+  const top10Share = storeConcentration.length >= 2
+    ? Number(storeConcentration[1] || 0)
+    : (storeConcentration.length > 0 ? Number(storeConcentration[storeConcentration.length - 1] || 0) : 0);
+  const top20Share = storeConcentration.length >= 4
+    ? Number(storeConcentration[3] || 0)
+    : (storeConcentration.length > 0 ? Number(storeConcentration[storeConcentration.length - 1] || 0) : 0);
+  document.getElementById('insight-top10-share').textContent = top10Share.toFixed(1);
+  document.getElementById('insight-top20-share').textContent = top20Share.toFixed(1);
+
+  document.getElementById('insight-turnover').textContent = fmtNum(chartData.turnoverRatio || 0);
+  document.getElementById('insight-slow-items-2').textContent = fmtNum(chartData.inventoryData.length);
+}
+
+function applyGlobalFilteredView(filteredRecords, filterMeta) {
+  const monthOrder = ((chartData.crossFilter || {}).options || {}).months || chartData.months || [];
+  const allBrands = Object.keys(chartData.brandMonthlyStacked || {});
+  const months = monthOrder.filter((m) => filteredRecords.some((r) => r.month === m));
+  const monthRecordsMap = new Map();
+  monthOrder.forEach((m) => monthRecordsMap.set(m, []));
+  filteredRecords.forEach((r) => {
+    if (!monthRecordsMap.has(r.month)) monthRecordsMap.set(r.month, []);
+    monthRecordsMap.get(r.month).push(r);
+  });
+
+  function emptyRow(cols, text = '无数据') {
+    return `<tr><td colspan="${cols}" style="color:#999;">${text}</td></tr>`;
+  }
+
+  function renderBrandTag(brand) {
+    if (brand === '伊利') return '<span class="tag" style="background:#dbeafe;color:#1e40af;">伊利</span>';
+    if (brand === '秦俑') return '<span class="tag" style="background:#fef3c7;color:#92400e;">秦俑</span>';
+    if (brand === '君乐宝') return '<span class="tag" style="background:#d1fae5;color:#065f46;">君乐宝</span>';
+    if (brand === '佳贝艾特') return '<span class="tag" style="background:#fce7f3;color:#9d174d;">佳贝艾特</span>';
+    return `<span class="tag">${escapeHtml(brand)}</span>`;
+  }
+
+  function sumBy(list, keyFn, valueFn) {
+    const m = new Map();
+    list.forEach((item) => {
+      const key = keyFn(item);
+      m.set(key, (m.get(key) || 0) + valueFn(item));
+    });
+    return m;
+  }
+
+  function rankChanges(monthlyMap, topN) {
+    const totalMap = new Map();
+    monthOrder.forEach((month) => {
+      const map = monthlyMap.get(month) || new Map();
+      map.forEach((value, key) => totalMap.set(key, (totalMap.get(key) || 0) + value));
+    });
+    const top = Array.from(totalMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, topN).map((x) => x[0]);
+    const monthRanks = new Map();
+    monthOrder.forEach((month) => {
+      const ranked = Array.from((monthlyMap.get(month) || new Map()).entries()).sort((a, b) => b[1] - a[1]);
+      const r = new Map();
+      ranked.forEach((item, idx) => r.set(item[0], idx + 1));
+      monthRanks.set(month, r);
+    });
+    return top.map((name) => {
+      const rankings = {};
+      const trends = {};
+      monthOrder.forEach((month, i) => {
+        const curr = monthRanks.get(month).get(name);
+        rankings[month] = curr ?? null;
+        if (i === 0 || curr == null) {
+          trends[month] = null;
+          return;
+        }
+        const prevMonth = monthOrder[i - 1];
+        const prev = monthRanks.get(prevMonth).get(name);
+        if (prev == null) trends[month] = { direction: 'new', change: null };
+        else if (curr < prev) trends[month] = { direction: 'up', change: prev - curr };
+        else if (curr > prev) trends[month] = { direction: 'down', change: curr - prev };
+        else trends[month] = { direction: 'stable', change: 0 };
+      });
+      return { name, rankings, trends };
+    });
+  }
+
+  const amountByMonth = monthOrder.map((m) => (monthRecordsMap.get(m) || []).reduce((s, r) => s + Number(r.amount || 0), 0));
+  const qtyByMonth = monthOrder.map((m) => (monthRecordsMap.get(m) || []).reduce((s, r) => s + Number(r.qty || 0), 0));
+  const amountByMonthMap = new Map(monthOrder.map((m, idx) => [m, amountByMonth[idx] || 0]));
+  const qtyByMonthMap = new Map(monthOrder.map((m, idx) => [m, qtyByMonth[idx] || 0]));
+  const trendMonths = months.length > 0 ? months : monthOrder;
+  const amountTrendSeries = trendMonths.map((m) => amountByMonthMap.get(m) || 0);
+  const qtyTrendSeries = trendMonths.map((m) => qtyByMonthMap.get(m) || 0);
+  const totalAmount = amountByMonth.reduce((a, b) => a + b, 0);
+  const totalQty = qtyByMonth.reduce((a, b) => a + b, 0);
+  const avgPrice = totalQty > 0 ? totalAmount / totalQty : 0;
+
+  const brandAmountMap = sumBy(filteredRecords, (r) => r.brand || '未知', (r) => Number(r.amount || 0));
+  const brandQtyMap = sumBy(filteredRecords, (r) => r.brand || '未知', (r) => Number(r.qty || 0));
+  const cumulativeBrandRows = allBrands.filter((b) => (brandAmountMap.get(b) || 0) > 0).map((brand) => {
+    const amount = brandAmountMap.get(brand) || 0;
+    const qty = brandQtyMap.get(brand) || 0;
+    return {
+      brand,
+      amount,
+      qty,
+      amountShare: totalAmount > 0 ? (amount / totalAmount * 100) : 0,
+      qtyShare: totalQty > 0 ? (qty / totalQty * 100) : 0,
+    };
+  });
+  const latestMonth = months.length > 0 ? months[months.length - 1] : null;
+  const latestRecords = latestMonth ? filteredRecords.filter((r) => r.month === latestMonth) : [];
+  const latestTotalAmount = latestRecords.reduce((s, r) => s + Number(r.amount || 0), 0);
+  const latestTotalQty = latestRecords.reduce((s, r) => s + Number(r.qty || 0), 0);
+  const currentBrandAmount = sumBy(latestRecords, (r) => r.brand || '未知', (r) => Number(r.amount || 0));
+  const currentBrandQty = sumBy(latestRecords, (r) => r.brand || '未知', (r) => Number(r.qty || 0));
+  const currentBrandRows = allBrands.filter((b) => (currentBrandAmount.get(b) || 0) > 0).map((brand) => {
+    const amount = currentBrandAmount.get(brand) || 0;
+    const qty = currentBrandQty.get(brand) || 0;
+    return {
+      brand,
+      amount,
+      qty,
+      amountShare: latestTotalAmount > 0 ? (amount / latestTotalAmount * 100) : 0,
+      qtyShare: latestTotalQty > 0 ? (qty / latestTotalQty * 100) : 0,
+    };
+  });
+
+  const productAmountMap = sumBy(filteredRecords, (r) => r.product || '未知', (r) => Number(r.amount || 0));
+  const productQtyMap = sumBy(filteredRecords, (r) => r.product || '未知', (r) => Number(r.qty || 0));
+  const top20Products = Array.from(productAmountMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 20);
+  const top20ProductsQty = Array.from(productQtyMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 20);
+
+  const storeAmountMap = sumBy(filteredRecords, (r) => r.store || '未知', (r) => Number(r.amount || 0));
+  const storeQtyMap = sumBy(filteredRecords, (r) => r.store || '未知', (r) => Number(r.qty || 0));
+  const top20Stores = Array.from(storeAmountMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 20);
+
+  const storeAgg = new Map();
+  filteredRecords.forEach((r) => {
+    const key = r.store || '未知';
+    if (!storeAgg.has(key)) {
+      storeAgg.set(key, { sales: 0, qty: 0, products: new Set(), dates: new Set() });
+    }
+    const row = storeAgg.get(key);
+    row.sales += Number(r.amount || 0);
+    row.qty += Number(r.qty || 0);
+    row.products.add(r.product || '未知');
+    if (r.date) row.dates.add(r.date);
+  });
+
+  const monthlyProductMap = new Map();
+  const monthlyStoreMap = new Map();
+  const monthlyBrandMap = new Map();
+  monthOrder.forEach((m) => {
+    const mRecords = monthRecordsMap.get(m) || [];
+    monthlyProductMap.set(m, sumBy(mRecords, (r) => r.product || '未知', (r) => Number(r.amount || 0)));
+    monthlyStoreMap.set(m, sumBy(mRecords, (r) => r.store || '未知', (r) => Number(r.amount || 0)));
+    monthlyBrandMap.set(m, sumBy(mRecords, (r) => r.brand || '未知', (r) => Number(r.amount || 0)));
+  });
+
+  const productTop10ByMonth = new Map();
+  monthOrder.forEach((m) => {
+    const ranked = Array.from((monthlyProductMap.get(m) || new Map()).entries()).sort((a, b) => b[1] - a[1]).slice(0, 10).map((x) => x[0]);
+    productTop10ByMonth.set(m, ranked);
+  });
+  const allTopProducts = new Set();
+  productTop10ByMonth.forEach((arr) => arr.forEach((x) => allTopProducts.add(x)));
+  const productStability = Array.from(allTopProducts).map((name) => {
+    let monthsIn = 0;
+    let sales = 0;
+    monthOrder.forEach((m) => {
+      if ((productTop10ByMonth.get(m) || []).includes(name)) {
+        monthsIn += 1;
+        sales += (monthlyProductMap.get(m).get(name) || 0);
+      }
+    });
+    return { name, months: monthsIn, sales };
+  }).sort((a, b) => (b.months - a.months) || (b.sales - a.sales)).slice(0, 20);
+
+  const storeTop20ByMonth = new Map();
+  monthOrder.forEach((m) => {
+    const ranked = Array.from((monthlyStoreMap.get(m) || new Map()).entries()).sort((a, b) => b[1] - a[1]).slice(0, 20).map((x) => x[0]);
+    storeTop20ByMonth.set(m, ranked);
+  });
+  const allTopStores = new Set();
+  storeTop20ByMonth.forEach((arr) => arr.forEach((x) => allTopStores.add(x)));
+  const storeStability = Array.from(allTopStores).map((name) => {
+    let monthsIn = 0;
+    let sales = 0;
+    monthOrder.forEach((m) => {
+      if ((storeTop20ByMonth.get(m) || []).includes(name)) {
+        monthsIn += 1;
+        sales += (monthlyStoreMap.get(m).get(name) || 0);
+      }
+    });
+    return { name, months: monthsIn, sales };
+  }).sort((a, b) => (b.months - a.months) || (b.sales - a.sales)).slice(0, 20);
+
+  const productConcentration = top20Products.slice(0, 10);
+  let running = 0;
+  const productConcentrationCumu = productConcentration.map((item) => {
+    running += item[1];
+    return totalAmount > 0 ? (running / totalAmount * 100) : 0;
+  });
+  const sortedStoreSales = Array.from(storeAmountMap.values()).sort((a, b) => b - a);
+  const storeConcentrationLabels = [];
+  const storeConcentrationData = [];
+  [5, 10, 15, 20].forEach((k) => {
+    if (sortedStoreSales.length >= k) {
+      storeConcentrationLabels.push(`Top${k}`);
+      const share = sortedStoreSales.slice(0, k).reduce((a, b) => a + b, 0) / (sortedStoreSales.reduce((a, b) => a + b, 0) || 1) * 100;
+      storeConcentrationData.push(share);
+    }
+  });
+
+  const monthlyStoreStats = monthOrder.map((m) => {
+    const mRecords = monthRecordsMap.get(m) || [];
+    const storeCount = new Set(mRecords.map((x) => x.store)).size;
+    const salesAmount = mRecords.reduce((s, r) => s + Number(r.amount || 0), 0);
+    const salesQty = mRecords.reduce((s, r) => s + Number(r.qty || 0), 0);
+    return {
+      month: m,
+      storeCount,
+      salesQty,
+      salesAmount,
+      avgPrice: salesQty > 0 ? (salesAmount / salesQty) : 0,
+    };
+  }).filter((x) => x.salesAmount !== 0 || x.salesQty !== 0 || x.storeCount !== 0);
+
+  const dailyMap = sumBy(filteredRecords.filter((r) => r.date), (r) => r.date, (r) => Number(r.amount || 0));
+  const daily = Array.from(dailyMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+
+  const brandMonthlyStacked = {};
+  allBrands.forEach((b) => {
+    brandMonthlyStacked[b] = monthOrder.map((m) => (monthlyBrandMap.get(m)?.get(b) || 0));
+  });
+
+  const productChanges = rankChanges(monthlyProductMap, 30);
+  const storeChanges = rankChanges(monthlyStoreMap, 30);
+  const top30ProductsTableHead = document.getElementById('top30ProductsTableHead');
+  const top30StoresTableHead = document.getElementById('top30StoresTableHead');
+  if (top30ProductsTableHead) {
+    top30ProductsTableHead.innerHTML = `<tr><th>产品</th>${monthOrder.map((m) => `<th>${escapeHtml(m)}</th>`).join('')}<th>变化趋势</th></tr>`;
+  }
+  if (top30StoresTableHead) {
+    top30StoresTableHead.innerHTML = `<tr><th>门店</th>${monthOrder.map((m) => `<th>${escapeHtml(m)}</th>`).join('')}<th>变化趋势</th></tr>`;
+  }
+
+  const monthlySharesRows = allBrands.map((brand) => {
+    const row = { brand };
+    monthOrder.forEach((m) => {
+      const monthTotal = amountByMonthMap.get(m) || 0;
+      const brandValue = monthlyBrandMap.get(m)?.get(brand) || 0;
+      row[m] = monthTotal > 0 ? (brandValue / monthTotal * 100) : 0;
+    });
+    return row;
+  });
+
+  const comboMap = new Map();
+  filteredRecords.forEach((r) => {
+    const key = `${r.brand}|||${r.store}`;
+    comboMap.set(key, (comboMap.get(key) || 0) + Number(r.amount || 0));
+  });
+  const brandStoreCombos = Array.from(comboMap.entries())
+    .map(([k, v]) => {
+      const [brand, store] = k.split('|||');
+      return { brand, store, sales: v };
+    })
+    .sort((a, b) => b.sales - a.sales)
+    .slice(0, 10);
+
+  const filteredProductSet = new Set(filteredRecords.map((r) => r.product));
+  const inventoryBaseMap = new Map((chartData.inventoryData || []).map((x) => [x.name, x]));
+  const activeMonths = monthOrder.filter((m) => (monthRecordsMap.get(m) || []).length > 0);
+  const effectiveMonths = activeMonths.length > 0 ? activeMonths : months;
+  const latestActiveMonth = activeMonths.length > 0 ? activeMonths[activeMonths.length - 1] : null;
+  const latestMonthQty = latestActiveMonth
+    ? (monthRecordsMap.get(latestActiveMonth) || []).reduce((sum, r) => sum + Number(r.qty || 0), 0)
+    : 0;
+  const totalInventory = Array.from(filteredProductSet).reduce((sum, productName) => {
+    const base = inventoryBaseMap.get(productName);
+    return sum + Number(base && base.inventory ? base.inventory : 0);
+  }, 0);
+  const filteredTurnoverRate = totalInventory > 0 ? latestMonthQty / totalInventory : 0;
+  const ytdYear = (
+    parseYearMonthLabel(latestActiveMonth || '') ||
+    parseYearMonthLabel(monthOrder[monthOrder.length - 1] || '')
+  );
+  const ytdMonths = ytdYear
+    ? monthOrder.filter((m) => {
+      const parsed = parseYearMonthLabel(m);
+      return parsed && parsed.year === ytdYear.year;
+    })
+    : [];
+  const ytdAmount = ytdMonths.reduce((sum, m) => sum + Number(amountByMonthMap.get(m) || 0), 0);
+  const ytdQty = ytdMonths.reduce((sum, m) => sum + Number(qtyByMonthMap.get(m) || 0), 0);
+  const ytdAvgPrice = ytdQty > 0 ? ytdAmount / ytdQty : 0;
+  const ytdTurnover = (totalInventory > 0 && ytdMonths.length > 0)
+    ? (ytdMonths
+      .map((m) => Number(qtyByMonthMap.get(m) || 0) / totalInventory)
+      .reduce((a, b) => a + b, 0) / ytdMonths.length)
+    : 0;
+
+  // KPI / 核心发现 / 附录
+  document.getElementById('kpi-sales-amount').textContent = fmtNum(totalAmount);
+  document.getElementById('kpi-sales-qty').textContent = fmtNum(totalQty);
+  document.getElementById('kpi-avg-price').textContent = fmtNum(avgPrice);
+  document.getElementById('kpi-turnover').textContent = fmtNum(filteredTurnoverRate);
+  document.getElementById('kpi-ytd-sales-amount').textContent = fmtNum(ytdAmount);
+  document.getElementById('kpi-ytd-sales-qty').textContent = fmtNum(ytdQty);
+  document.getElementById('kpi-ytd-avg-price').textContent = fmtNum(ytdAvgPrice);
+  document.getElementById('kpi-ytd-turnover').textContent = fmtNum(ytdTurnover);
+
+  document.getElementById('insight-total-records').textContent = fmtNum(filteredRecords.length);
+  document.getElementById('insight-total-stores').textContent = new Set(filteredRecords.map((x) => x.store)).size;
+  document.getElementById('insight-total-brands').textContent = new Set(filteredRecords.map((x) => x.brand)).size;
+  document.getElementById('insight-slow-items').textContent = '0.0';
+  const effectiveMonthAmounts = effectiveMonths.map((m) => amountByMonthMap.get(m) || 0);
+  const peakAmount = effectiveMonthAmounts.length > 0 ? Math.max(...effectiveMonthAmounts) : 0;
+  const peakIndex = effectiveMonthAmounts.indexOf(peakAmount);
+  const peakMonth = peakIndex >= 0 ? effectiveMonths[peakIndex] : '--';
+  const rangeStart = effectiveMonths[0] || '--';
+  const rangeEnd = effectiveMonths[effectiveMonths.length - 1] || '--';
+  document.getElementById('insight-months-range').textContent = `${rangeStart} 至 ${rangeEnd}`;
+  document.getElementById('insight-total-amount').textContent = fmtNum(totalAmount);
+  document.getElementById('insight-peak-month').textContent = peakMonth;
+  document.getElementById('insight-peak-amount').textContent = fmtNum(peakAmount);
+  const brandSharesForCr3 = cumulativeBrandRows.map((x) => x.amountShare).sort((a, b) => b - a);
+  const cr3 = brandSharesForCr3.slice(0, 3).reduce((a, b) => a + b, 0);
+  document.getElementById('insight-cr3').textContent = cr3.toFixed(1);
+  const top10Share = sortedStoreSales.length > 0 ? (sortedStoreSales.slice(0, 10).reduce((a, b) => a + b, 0) / sortedStoreSales.reduce((a, b) => a + b, 0) * 100) : 0;
+  const top20Share = sortedStoreSales.length > 0 ? (sortedStoreSales.slice(0, 20).reduce((a, b) => a + b, 0) / sortedStoreSales.reduce((a, b) => a + b, 0) * 100) : 0;
+  document.getElementById('insight-top10-share').textContent = top10Share.toFixed(1);
+  document.getElementById('insight-top20-share').textContent = top20Share.toFixed(1);
+  document.getElementById('insight-turnover').textContent = fmtNum(filteredTurnoverRate);
+  document.getElementById('insight-slow-items-2').textContent = '0.0';
+
+  document.getElementById('appendix-total-rows').textContent = `${fmtNum(filteredRecords.length)}行`;
+  const appendixFieldCount = filteredRecords.length > 0
+    ? Object.keys(filteredRecords[0] || {}).length
+    : Number(((chartData.dataQuality || {}).totalFields) || 0);
+  const qualityFields = ['store', 'brand', 'product', 'amount', 'qty'];
+  if (filteredRecords.some((row) => Object.prototype.hasOwnProperty.call(row, 'province'))) {
+    qualityFields.push('province');
+  }
+  if (filteredRecords.some((row) => Object.prototype.hasOwnProperty.call(row, 'date'))) {
+    qualityFields.push('date');
+  }
+  const fallbackCompleteness = Number(((chartData.dataQuality || {}).keyCompleteness) || 0);
+  let appendixCompleteness = fallbackCompleteness;
+  if (filteredRecords.length > 0 && qualityFields.length > 0) {
+    const totalChecks = filteredRecords.length * qualityFields.length;
+    let validChecks = 0;
+    filteredRecords.forEach((row) => {
+      qualityFields.forEach((field) => {
+        const value = row[field];
+        if (value == null) return;
+        if (typeof value === 'string' && value.trim() === '') return;
+        validChecks += 1;
+      });
+    });
+    appendixCompleteness = totalChecks > 0 ? (validChecks / totalChecks * 100) : 0;
+  }
+  document.getElementById('appendix-total-fields').textContent = `${appendixFieldCount}列`;
+  document.getElementById('appendix-key-completeness').textContent = `${appendixCompleteness.toFixed(1)}%`;
+  const negAmount = filteredRecords.filter((r) => Number(r.amount || 0) < 0).length;
+  const negQty = filteredRecords.filter((r) => Number(r.qty || 0) < 0).length;
+  document.getElementById('appendix-negative-values').textContent = `负销售额${negAmount}条，负销量${negQty}条`;
+  const appendixSources = document.getElementById('appendix-data-sources');
+  if (appendixSources && chartData.dataSourceItems) {
+    appendixSources.innerHTML = chartData.dataSourceItems.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
+  }
+
+  // 品牌明细表
+  const cumulativeBody = document.getElementById('brand-cumulative-body');
+  const currentBody = document.getElementById('brand-current-body');
+  cumulativeBody.innerHTML = '';
+  currentBody.innerHTML = '';
+  if (cumulativeBrandRows.length === 0) cumulativeBody.innerHTML = emptyRow(5);
+  else cumulativeBrandRows.forEach((x) => {
+    cumulativeBody.innerHTML += `<tr><td>${renderBrandTag(x.brand)}</td><td>${fmtMoney(x.amount)}</td><td>${fmtNum(x.qty)}</td><td>${x.amountShare.toFixed(1)}%</td><td>${x.qtyShare.toFixed(1)}%</td></tr>`;
+  });
+  if (currentBrandRows.length === 0) currentBody.innerHTML = emptyRow(5);
+  else currentBrandRows.forEach((x) => {
+    currentBody.innerHTML += `<tr><td>${renderBrandTag(x.brand)}</td><td>${fmtMoney(x.amount)}</td><td>${fmtNum(x.qty)}</td><td>${x.amountShare.toFixed(1)}%</td><td>${x.qtyShare.toFixed(1)}%</td></tr>`;
+  });
+
+  // 月度门店统计
+  const monthlyStoreStatsHead = document.getElementById('monthlyStoreStatsHead');
+  const monthlyStoreStatsTable = document.getElementById('monthlyStoreStatsTable');
+  const monthlyStoreStatsFoot = document.getElementById('monthlyStoreStatsFoot');
+  if (monthlyStoreStats.length === 0) {
+    monthlyStoreStatsHead.innerHTML = '<tr><th>指标</th><th>无数据</th></tr>';
+    monthlyStoreStatsTable.innerHTML = emptyRow(2);
+    monthlyStoreStatsFoot.innerHTML = '';
+  } else {
+    let headerHtml = '<tr><th>指标</th>';
+    monthlyStoreStats.forEach((item) => { headerHtml += `<th>${item.month}</th>`; });
+    headerHtml += '<th>合计</th></tr>';
+    monthlyStoreStatsHead.innerHTML = headerHtml;
+    const totalStores = monthlyStoreStats.length > 0
+      ? Number(monthlyStoreStats[monthlyStoreStats.length - 1].storeCount || 0)
+      : 0;
+    const totalAmt = monthlyStoreStats.reduce((s, x) => s + x.salesAmount, 0);
+    const totalQtyLocal = monthlyStoreStats.reduce((s, x) => s + x.salesQty, 0);
+    const avgOfAvg = monthlyStoreStats.reduce((s, x) => s + x.avgPrice, 0) / monthlyStoreStats.length;
+    monthlyStoreStatsTable.innerHTML =
+      `<tr><td>覆盖门店(家)</td>${monthlyStoreStats.map((x) => `<td>${fmtNum(x.storeCount)}</td>`).join('')}<td style='font-weight:600;'>${fmtNum(totalStores)}</td></tr>` +
+      `<tr><td>销售金额(元)</td>${monthlyStoreStats.map((x) => `<td>${fmtMoney(x.salesAmount)}</td>`).join('')}<td style='font-weight:600;'>${fmtMoney(totalAmt)}</td></tr>` +
+      `<tr><td>当月销量(个)</td>${monthlyStoreStats.map((x) => `<td>${fmtNum(x.salesQty)}</td>`).join('')}<td style='font-weight:600;'>${fmtNum(totalQtyLocal)}</td></tr>` +
+      `<tr><td>客单价(元)</td>${monthlyStoreStats.map((x) => `<td>${fmtMoney(x.avgPrice)}</td>`).join('')}<td style='font-weight:600;'>${fmtMoney(avgOfAvg)}</td></tr>`;
+    monthlyStoreStatsFoot.innerHTML = '';
+  }
+
+  // 品牌月占比表
+  const brandMonthlySharesHead = document.getElementById('brandMonthlySharesHead');
+  const brandMonthlySharesTable = document.getElementById('brandMonthlySharesTable');
+  brandMonthlySharesHead.innerHTML = `<tr><th>品牌</th>${monthOrder.map((m) => `<th>${m}</th>`).join('')}</tr>`;
+  brandMonthlySharesTable.innerHTML = '';
+  monthlySharesRows.forEach((row) => {
+    let html = `<tr><td>${renderBrandTag(row.brand)}</td>`;
+    monthOrder.forEach((m) => { html += `<td>${(row[m] || 0).toFixed(1)}%</td>`; });
+    html += '</tr>';
+    brandMonthlySharesTable.innerHTML += html;
+  });
+
+  // Top10门店表
+  const top10StoresBody = document.getElementById('top10StoresTable');
+  top10StoresBody.innerHTML = '';
+  if (top20Stores.length === 0) top10StoresBody.innerHTML = emptyRow(3);
+  else {
+    const base = top20Stores.reduce((s, x) => s + x[1], 0) || 1;
+    top20Stores.slice(0, 10).forEach((item) => {
+      const ratio = item[1] / base * 100;
+      top10StoresBody.innerHTML += `<tr><td>${escapeHtml(item[0])}</td><td>${fmtMoney(item[1])}</td><td>${ratio.toFixed(1)}%</td></tr>`;
+    });
+  }
+
+  // 排名变化表
+  const top30ProductsTable = document.getElementById('top30ProductsTable');
+  const top30StoresTableBody = document.getElementById('top30StoresTable');
+  top30ProductsTable.innerHTML = '';
+  top30StoresTableBody.innerHTML = '';
+  productChanges.forEach((item) => {
+    let row = `<tr><td>${escapeHtml(item.name)}</td>`;
+    monthOrder.forEach((m) => {
+      const r = item.rankings[m];
+      row += `<td>${r == null ? '<span style="color:#ccc;">-</span>' : r}</td>`;
+    });
+    const t = item.trends[monthOrder[monthOrder.length - 1]];
+    const icon = t && t.direction === 'up' ? '<span style="color:#4caf50;">↑</span>' :
+      t && t.direction === 'down' ? '<span style="color:#f44336;">↓</span>' :
+      t && t.direction === 'new' ? '<span style="color:#2196f3;">新</span>' : '<span style="color:#9e9e9e;">-</span>';
+    row += `<td>${icon} ${t && t.change != null ? t.change : ''}</td></tr>`;
+    top30ProductsTable.innerHTML += row;
+  });
+  storeChanges.forEach((item) => {
+    let row = `<tr><td>${escapeHtml(item.name)}</td>`;
+    monthOrder.forEach((m) => {
+      const r = item.rankings[m];
+      row += `<td>${r == null ? '<span style="color:#ccc;">-</span>' : r}</td>`;
+    });
+    const t = item.trends[monthOrder[monthOrder.length - 1]];
+    const icon = t && t.direction === 'up' ? '<span style="color:#4caf50;">↑</span>' :
+      t && t.direction === 'down' ? '<span style="color:#f44336;">↓</span>' :
+      t && t.direction === 'new' ? '<span style="color:#2196f3;">新</span>' : '<span style="color:#9e9e9e;">-</span>';
+    row += `<td>${icon} ${t && t.change != null ? t.change : ''}</td></tr>`;
+    top30StoresTableBody.innerHTML += row;
+  });
+
+  // 稳定性表
+  const productStabilityTable = document.getElementById('productStabilityTable');
+  const storeStabilityTable = document.getElementById('storeStabilityTable');
+  productStabilityTable.innerHTML = '';
+  storeStabilityTable.innerHTML = '';
+  productStability.forEach((x) => {
+    productStabilityTable.innerHTML += `<tr><td>${escapeHtml(x.name)}</td><td>${fmtNum(x.months)}</td><td>${fmtMoney(x.sales)}</td></tr>`;
+  });
+  storeStability.forEach((x) => {
+    storeStabilityTable.innerHTML += `<tr><td>${escapeHtml(x.name)}</td><td>${fmtNum(x.months)}</td><td>${fmtMoney(x.sales)}</td></tr>`;
+  });
+
+  // 新品贡献
+  const newProductContributionsContainer = document.getElementById('newProductContributionsContainer');
+  newProductContributionsContainer.innerHTML = '';
+  const seen = new Set();
+  const newProductContributions = [];
+  monthOrder.forEach((m) => {
+    const mRecords = monthRecordsMap.get(m) || [];
+    const pSet = new Set(mRecords.map((x) => x.product));
+    const newProducts = Array.from(pSet).filter((x) => !seen.has(x));
+    newProducts.forEach((x) => seen.add(x));
+    const monthTotalAmount = mRecords.reduce((s, r) => s + Number(r.amount || 0), 0);
+    const monthTotalQty = mRecords.reduce((s, r) => s + Number(r.qty || 0), 0);
+    const pRows = newProducts.map((p) => {
+      const rs = mRecords.filter((r) => r.product === p);
+      return {
+        product: p,
+        sales_amount: rs.reduce((s, r) => s + Number(r.amount || 0), 0),
+        sales_qty: rs.reduce((s, r) => s + Number(r.qty || 0), 0),
+      };
+    }).sort((a, b) => b.sales_amount - a.sales_amount);
+    const newAmount = pRows.reduce((s, x) => s + x.sales_amount, 0);
+    const newQty = pRows.reduce((s, x) => s + x.sales_qty, 0);
+    newProductContributions.push({
+      month: m,
+      new_product_count: newProducts.length,
+      new_sales_amount: newAmount,
+      new_sales_qty: newQty,
+      amount_contribution: monthTotalAmount > 0 ? newAmount / monthTotalAmount * 100 : 0,
+      qty_contribution: monthTotalQty > 0 ? newQty / monthTotalQty * 100 : 0,
+      new_products: pRows,
+    });
+  });
+  newProductContributions.slice(-2).forEach((monthData) => {
+    const newCount = monthData.new_product_count;
+    if (newCount === 0) {
+      newProductContributionsContainer.innerHTML += `<div style="margin-bottom:16px;padding:12px;background:#f5f5f5;border-radius:4px;"><strong>${monthData.month}</strong>：无新品上市</div>`;
+      return;
+    }
+    let html = `<div style="margin-bottom:24px;"><h4 style="margin-bottom:8px;color:var(--primary);">${monthData.month} 新品贡献</h4><div style="margin-bottom:8px;font-size:14px;color:#666;">新品数量：<strong>${fmtNum(newCount)}</strong>个 | 新品销售额：<strong>${fmtMoney(monthData.new_sales_amount)}</strong> (占比 <strong>${monthData.amount_contribution.toFixed(1)}%</strong>) | 新品销售量：<strong>${fmtNum(monthData.new_sales_qty)}</strong>个 (占比 <strong>${monthData.qty_contribution.toFixed(1)}%</strong>)</div><table class="table"><thead><tr><th>产品名称</th><th>销售金额</th><th>销售数量</th><th>金额贡献</th></tr></thead><tbody>`;
+    monthData.new_products.forEach((p) => {
+      const contrib = monthData.new_sales_amount > 0 ? p.sales_amount / monthData.new_sales_amount * 100 : 0;
+      html += `<tr><td>${escapeHtml(p.product)}</td><td>${fmtMoney(p.sales_amount)}</td><td>${fmtNum(p.sales_qty)}</td><td>${contrib.toFixed(1)}%</td></tr>`;
+    });
+    html += '</tbody></table></div>';
+    newProductContributionsContainer.innerHTML += html;
+  });
+
+  // 品牌×门店Top10
+  const brandStoreComboBody = document.getElementById('brandStoreCombo');
+  brandStoreComboBody.innerHTML = '';
+  brandStoreCombos.forEach((item) => {
+    brandStoreComboBody.innerHTML += `<tr><td>${renderBrandTag(item.brand)}</td><td>${escapeHtml(item.store)}</td><td>${fmtMoney(item.sales)}</td></tr>`;
+  });
+
+  // 门店分类 + 散点 + 雷达
+  const storeRows = Array.from(storeAgg.entries()).map(([name, v]) => {
+    const avg = v.qty > 0 ? v.sales / v.qty : 0;
+    return { name, sales: v.sales, qty: v.qty, avgPrice: avg, sku: v.products.size, days: v.dates.size };
+  });
+  const sortedSales = storeRows.map((x) => x.sales).sort((a, b) => a - b);
+  const sortedAvg = storeRows.map((x) => x.avgPrice).sort((a, b) => a - b);
+  const salesMid = sortedSales.length ? sortedSales[Math.floor(sortedSales.length / 2)] : 0;
+  const avgMid = sortedAvg.length ? sortedAvg[Math.floor(sortedAvg.length / 2)] : 0;
+  const classMap = { star: [], potential: [], volume: [], improve: [] };
+  const colorMap = { star: '#4caf50', potential: '#2196f3', volume: '#ff9800', improve: '#9e9e9e' };
+  const scatterPoints = [];
+  storeRows.forEach((x) => {
+    const highSales = x.sales >= salesMid;
+    const highAvg = x.avgPrice >= avgMid;
+    const c = highSales && highAvg ? 'star' : (!highSales && highAvg ? 'potential' : (highSales ? 'volume' : 'improve'));
+    classMap[c].push(x);
+    scatterPoints.push({ x: x.qty, y: Number(x.avgPrice.toFixed(2)), name: x.name, category: c, color: colorMap[c] });
+  });
+  const containerMap = { star: 'star-stores', potential: 'potential-stores', volume: 'volume-stores', improve: 'improve-stores' };
+  Object.keys(containerMap).forEach((k) => {
+    const el = document.getElementById(containerMap[k]);
+    if (!el) return;
+    if (classMap[k].length === 0) el.innerHTML = '<p style="font-size:13px;color:#999;">无</p>';
+    else el.innerHTML = classMap[k].map((s) => `<span style='display:inline-block;background:#fff;border:1px solid #ddd;border-radius:4px;padding:4px 8px;margin:4px;font-size:12px;'>${escapeHtml(s.name)}</span>`).join('');
+  });
+
+  const scatterChart = Chart.getChart(document.getElementById('storeScatterChart'));
+  if (scatterChart) {
+    const categoryNames = { star: '明星门店', potential: '潜力门店', volume: '走量门店', improve: '待提升门店' };
+    const grouped = {};
+    scatterPoints.forEach((p) => {
+      if (!grouped[p.category]) grouped[p.category] = { label: categoryNames[p.category], data: [], backgroundColor: p.color, borderColor: p.color, pointRadius: 7, pointHoverRadius: 9 };
+      grouped[p.category].data.push({ x: p.x, y: p.y, name: p.name });
+    });
+    scatterChart.data.datasets = Object.values(grouped);
+    scatterChart.update();
+  }
+
+  const top5Stores = top20Stores.slice(0, 5).map((x) => x[0]);
+  const maxSales = Math.max(...storeRows.map((x) => x.sales), 1);
+  const maxAvg = Math.max(...storeRows.map((x) => x.avgPrice), 1);
+  const maxSku = Math.max(...storeRows.map((x) => x.sku), 1);
+  const maxDays = Math.max(...storeRows.map((x) => x.days), 1);
+  const radarSeries = top5Stores.map((name) => {
+    const s = storeRows.find((x) => x.name === name);
+    if (!s) return { label: name, data: [0, 0, 0, 0, 0] };
+    return {
+      label: name,
+      data: [
+        Number((s.sales / maxSales * 100).toFixed(1)),
+        Number((s.avgPrice / maxAvg * 100).toFixed(1)),
+        Number((s.sku / maxSku * 100).toFixed(1)),
+        Number((s.days / maxDays * 100).toFixed(1)),
+        Number((Math.min(filteredTurnoverRate * 100, 100)).toFixed(1)),
+      ],
+    };
+  });
+  const radarChart = Chart.getChart(document.getElementById('storeRadarChart'));
+  if (radarChart) {
+    radarChart.data.datasets = radarSeries.map((d, i) => ({
+      label: d.label,
+      data: d.data,
+      backgroundColor: `rgba(${i === 0 ? '26, 35, 126' : i === 1 ? '33, 150, 243' : i === 2 ? '76, 175, 80' : i === 3 ? '244, 67, 54' : '255, 152, 0'}, 0.2)`,
+      borderColor: `rgb(${i === 0 ? '26, 35, 126' : i === 1 ? '33, 150, 243' : i === 2 ? '76, 175, 80' : i === 3 ? '244, 67, 54' : '255, 152, 0'})`,
+      pointBackgroundColor: `rgb(${i === 0 ? '26, 35, 126' : i === 1 ? '33, 150, 243' : i === 2 ? '76, 175, 80' : i === 3 ? '244, 67, 54' : '255, 152, 0'})`,
+      borderWidth: 2,
+    }));
+    radarChart.update();
+  }
+
+  // 库存表随筛选口径联动（库存按商品固定，销售按筛选口径重算）
+  const productBrandMap = {};
+  filteredRecords.forEach((r) => {
+    if (!productBrandMap[r.product]) productBrandMap[r.product] = r.brand || '未知';
+  });
+
+  const recentMonths = (activeMonths.length > 0 ? activeMonths : monthOrder).slice(-3);
+  const monthCount = recentMonths.length || 1;
+
+  const qtyByProductMonth = new Map();
+  filteredRecords.forEach((r) => {
+    if (!recentMonths.includes(r.month)) return;
+    const key = `${r.product}|||${r.month}`;
+    qtyByProductMonth.set(key, (qtyByProductMonth.get(key) || 0) + Number(r.qty || 0));
+  });
+
+  const invRows = Array.from(filteredProductSet).map((productName) => {
+    const base = inventoryBaseMap.get(productName);
+    if (!base) return null;
+
+    const avgSales = recentMonths.reduce((sum, m) => {
+      return sum + (qtyByProductMonth.get(`${productName}|||${m}`) || 0);
+    }, 0) / monthCount;
+    const ratio = avgSales > 0 ? Number(base.inventory || 0) / avgSales : 999;
+
+    return {
+      name: productName,
+      brand: base.brand || productBrandMap[productName] || '其他',
+      barcode: base.barcode || '-',
+      inventory: Number(base.inventory || 0),
+      avgSales,
+      ratio,
+    };
+  }).filter(Boolean).sort((a, b) => b.ratio - a.ratio);
+
+  document.getElementById('insight-slow-items').textContent = fmtNum(invRows.length);
+  document.getElementById('insight-slow-items-2').textContent = fmtNum(invRows.length);
+  const inventoryOverviewBody = document.getElementById('inventoryOverviewTable');
+  const riskWarningBody = document.getElementById('riskWarningTable');
+  inventoryOverviewBody.innerHTML = '';
+  riskWarningBody.innerHTML = '';
+  invRows.slice(0, 10).forEach((item) => {
+    const ratioClass = item.ratio > 20 ? 'risk-red' : item.ratio > 5 ? 'risk-yellow' : 'risk-green';
+    const ratioDisplay = item.ratio >= 100 ? '>100' : fmtNum(Number(item.ratio));
+    inventoryOverviewBody.innerHTML += `<tr><td>${escapeHtml(item.name)}</td><td>${fmtNum(Number(item.inventory))}</td><td>${fmtNum(Number(item.avgSales))}</td><td><span class="${ratioClass}">${ratioDisplay}</span></td></tr>`;
+  });
+  const maxSlowItems = Number(chartData.maxSlowItems || 20);
+  invRows.slice(0, maxSlowItems).forEach((item) => {
+    const invTurn = Number(item.inventory) > 0 ? Number(item.avgSales) / Number(item.inventory) : 0;
+    const ratio = Number(item.ratio);
+    const riskClass = ratio >= 20 ? 'risk-red' : ratio >= 5 ? 'risk-yellow' : 'risk-green';
+    const riskLabel = ratio >= 20 ? '高风险' : ratio >= 5 ? '中风险' : '低风险';
+    riskWarningBody.innerHTML += `<tr><td>${escapeHtml(item.barcode || '-')}</td><td>${escapeHtml(item.name)}</td><td>${escapeHtml(item.brand || productBrandMap[item.name] || '其他')}</td><td>${fmtNum(Number(item.inventory))}</td><td>${fmtNum(Number(item.avgSales))}</td><td>${fmtNum(invTurn)}</td><td><span class="${riskClass}">${riskLabel}</span></td></tr>`;
+  });
+
+  // 图表更新（品牌占比图保留原始口径，不参与筛选）
+  const monthlySalesChart = Chart.getChart(document.getElementById('monthlySalesChart'));
+  if (monthlySalesChart) {
+    const salesTrendData = buildTrendLineChartData(
+      trendMonths,
+      amountTrendSeries,
+      '销售金额',
+      '#1a237e',
+      'rgba(26, 35, 126, 0.1)'
+    );
+    monthlySalesChart.data.labels = salesTrendData.labels;
+    monthlySalesChart.data.datasets = salesTrendData.datasets;
+    monthlySalesChart.options.plugins.legend.display = salesTrendData.datasets.length > 1;
+    monthlySalesChart.update();
+  }
+  const dailySalesChart = Chart.getChart(document.getElementById('dailySalesChart'));
+  if (dailySalesChart) {
+    const dailyTrendData = buildDailyTrendChartData(
+      daily.map((x) => ({ date: x[0], value: x[1] }))
+    );
+    dailySalesChart.data.labels = dailyTrendData.labels;
+    dailySalesChart.data.datasets = dailyTrendData.datasets;
+    dailySalesChart.options.plugins.legend.display = dailyTrendData.datasets.length > 1;
+    dailySalesChart.update();
+  }
+  const brandMonthlyStackedChart = Chart.getChart(document.getElementById('brandMonthlyStacked'));
+  if (brandMonthlyStackedChart) {
+    brandMonthlyStackedChart.data.labels = monthOrder;
+    brandMonthlyStackedChart.data.datasets.forEach((ds) => {
+      ds.data = brandMonthlyStacked[ds.label] || monthOrder.map(() => 0);
+    });
+    brandMonthlyStackedChart.update();
+  }
+  const qtyMonthlyChart = Chart.getChart(document.getElementById('qtyMonthlyChart'));
+  if (qtyMonthlyChart) {
+    const qtyTrendData = buildTrendLineChartData(
+      trendMonths,
+      qtyTrendSeries,
+      '销售数量',
+      '#4caf50',
+      'rgba(76, 175, 80, 0.1)'
+    );
+    qtyMonthlyChart.data.labels = qtyTrendData.labels;
+    qtyMonthlyChart.data.datasets = qtyTrendData.datasets;
+    qtyMonthlyChart.options.plugins.legend.display = qtyTrendData.datasets.length > 1;
+    qtyMonthlyChart.update();
+  }
+  const top20ProductsChart = Chart.getChart(document.getElementById('top20ProductsChart'));
+  if (top20ProductsChart) {
+    top20ProductsChart.data.labels = top20Products.map((x) => x[0]);
+    top20ProductsChart.data.datasets[0].data = top20Products.map((x) => x[1]);
+    top20ProductsChart.update();
+  }
+  const top20ProductsQtyChart = Chart.getChart(document.getElementById('top20ProductsQtyChart'));
+  if (top20ProductsQtyChart) {
+    top20ProductsQtyChart.data.labels = top20ProductsQty.map((x) => x[0]);
+    top20ProductsQtyChart.data.datasets[0].data = top20ProductsQty.map((x) => x[1]);
+    top20ProductsQtyChart.update();
+  }
+  const productStabilityChart = Chart.getChart(document.getElementById('productStabilityChart'));
+  if (productStabilityChart) {
+    productStabilityChart.data.labels = productStability.map((x) => x.name);
+    productStabilityChart.data.datasets[0].data = productStability.map((x) => x.months);
+    productStabilityChart.data.datasets[1].data = productStability.map((x) => x.sales);
+    productStabilityChart.update();
+  }
+  const top20StoresChart = Chart.getChart(document.getElementById('top20StoresChart'));
+  if (top20StoresChart) {
+    top20StoresChart.data.labels = top20Stores.map((x) => x[0]);
+    top20StoresChart.data.datasets[0].data = top20Stores.map((x) => x[1]);
+    top20StoresChart.update();
+  }
+  const storeStabilityChart = Chart.getChart(document.getElementById('storeStabilityChart'));
+  if (storeStabilityChart) {
+    storeStabilityChart.data.labels = storeStability.map((x) => x.name);
+    storeStabilityChart.data.datasets[0].data = storeStability.map((x) => x.months);
+    storeStabilityChart.data.datasets[1].data = storeStability.map((x) => x.sales);
+    storeStabilityChart.update();
+  }
+  const productConcentrationChart = Chart.getChart(document.getElementById('productConcentrationChart'));
+  if (productConcentrationChart) {
+    productConcentrationChart.data.labels = productConcentration.map((x) => x[0].slice(0, 15));
+    productConcentrationChart.data.datasets[0].data = productConcentration.map((x) => x[1]);
+    productConcentrationChart.data.datasets[1].data = productConcentrationCumu;
+    productConcentrationChart.update();
+  }
+  const storeConcentrationChart = Chart.getChart(document.getElementById('storeConcentrationChart'));
+  if (storeConcentrationChart) {
+    storeConcentrationChart.data.labels = storeConcentrationLabels;
+    storeConcentrationChart.data.datasets[0].data = storeConcentrationData;
+    storeConcentrationChart.update();
+  }
+}
+
+function initCrossFilter() {
+  const filterCard = document.getElementById('crossFilterCard');
+  const monthDropdown = document.getElementById('filter-month-dropdown');
+  const monthTrigger = document.getElementById('filter-month-trigger');
+  const monthOptions = document.getElementById('filter-month-options');
+  const provinceDropdown = document.getElementById('filter-province-dropdown');
+  const provinceTrigger = document.getElementById('filter-province-trigger');
+  const provinceOptions = document.getElementById('filter-province-options');
+  const storeDropdown = document.getElementById('filter-store-dropdown');
+  const storeTrigger = document.getElementById('filter-store-trigger');
+  const storeOptions = document.getElementById('filter-store-options');
+  const brandDropdown = document.getElementById('filter-brand-dropdown');
+  const brandTrigger = document.getElementById('filter-brand-trigger');
+  const brandOptions = document.getElementById('filter-brand-options');
+  const resetBtn = document.getElementById('filter-reset-btn');
+  const scopeText = document.getElementById('filter-current-scope');
+  const topProductsBody = document.getElementById('cf-top-products');
+  const topStoresBody = document.getElementById('cf-top-stores');
+  const lockbarMonth = document.getElementById('lockbar-month');
+  const lockbarProvince = document.getElementById('lockbar-province');
+  const lockbarStore = document.getElementById('lockbar-store');
+  const lockbarBrand = document.getElementById('lockbar-brand');
+
+  const filterData = chartData.crossFilter || {};
+  const options = filterData.options || {};
+  const records = Array.isArray(filterData.records) ? filterData.records : [];
+  const normalizedRecords = records.map((item) => ({
+    ...item,
+    province: item.province || '未知省份',
+  }));
+
+  if (!filterCard || normalizedRecords.length === 0) {
+    if (filterCard) {
+      filterCard.style.display = 'none';
+    }
+    return;
+  }
+
+  const derivedProvinces = Array.from(new Set(normalizedRecords.map((item) => item.province || '未知省份'))).sort();
+
+  const dimensionValues = {
+    month: options.months || [],
+    province: (options.provinces && options.provinces.length > 0) ? options.provinces : derivedProvinces,
+    store: options.stores || [],
+    brand: options.brands || [],
+  };
+  const selected = {
+    month: new Set(),
+    province: new Set(),
+    store: new Set(),
+    brand: new Set(),
+  };
+  const selectionActive = {
+    month: false,
+    province: false,
+    store: false,
+    brand: false,
+  };
+  const uiMap = {
+    month: { dropdown: monthDropdown, trigger: monthTrigger, panel: monthOptions, label: '时间' },
+    province: { dropdown: provinceDropdown, trigger: provinceTrigger, panel: provinceOptions, label: '省份' },
+    store: { dropdown: storeDropdown, trigger: storeTrigger, panel: storeOptions, label: '门店' },
+    brand: { dropdown: brandDropdown, trigger: brandTrigger, panel: brandOptions, label: '品牌' },
+  };
+  Object.values(uiMap).forEach((ui) => {
+    ui.dropdown.addEventListener('click', (event) => {
+      event.stopPropagation();
+    });
+  });
+
+  function getDisplayText(dimension) {
+    const values = dimensionValues[dimension];
+    const picked = Array.from(selected[dimension]);
+    if (values.length === 0) {
+      return '全部';
+    }
+    if (!selectionActive[dimension]) {
+      return '全部';
+    }
+    if (picked.length === 0) {
+      return '全不选';
+    }
+    if (picked.length === values.length) {
+      return '全部';
+    }
+    if (picked.length <= 2) {
+      return picked.join('、');
+    }
+    return `${picked.slice(0, 2).join('、')}等${picked.length}项`;
+  }
+
+  function buildPanel(dimension) {
+    const panel = uiMap[dimension].panel;
+    const values = dimensionValues[dimension];
+    panel.innerHTML = '';
+
+    const actions = document.createElement('div');
+    actions.className = 'filter-panel-actions';
+
+    const selectAllId = `cf-${dimension}-select-all`;
+    const selectNoneId = `cf-${dimension}-select-none`;
+
+    const selectAllLabel = document.createElement('label');
+    selectAllLabel.className = 'filter-option filter-option-meta';
+    selectAllLabel.setAttribute('for', selectAllId);
+    const selectAllInput = document.createElement('input');
+    selectAllInput.type = 'checkbox';
+    selectAllInput.id = selectAllId;
+    selectAllInput.dataset.role = 'select-all';
+    const selectAllText = document.createElement('span');
+    selectAllText.textContent = '全选';
+    selectAllLabel.appendChild(selectAllInput);
+    selectAllLabel.appendChild(selectAllText);
+
+    const selectNoneLabel = document.createElement('label');
+    selectNoneLabel.className = 'filter-option filter-option-meta';
+    selectNoneLabel.setAttribute('for', selectNoneId);
+    const selectNoneInput = document.createElement('input');
+    selectNoneInput.type = 'checkbox';
+    selectNoneInput.id = selectNoneId;
+    selectNoneInput.dataset.role = 'select-none';
+    const selectNoneText = document.createElement('span');
+    selectNoneText.textContent = '全不选';
+    selectNoneLabel.appendChild(selectNoneInput);
+    selectNoneLabel.appendChild(selectNoneText);
+
+    actions.appendChild(selectAllLabel);
+    actions.appendChild(selectNoneLabel);
+    panel.appendChild(actions);
+
+    const optionInputs = [];
+    values.forEach((value, idx) => {
+      const checkboxId = `cf-${dimension}-${idx}`;
+      const label = document.createElement('label');
+      label.className = 'filter-option';
+      label.setAttribute('for', checkboxId);
+
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.id = checkboxId;
+      input.value = String(value);
+      input.dataset.role = 'option';
+      input.checked = selected[dimension].has(String(value));
+
+      const span = document.createElement('span');
+      span.textContent = String(value);
+
+      label.appendChild(input);
+      label.appendChild(span);
+      panel.appendChild(label);
+      optionInputs.push(input);
+    });
+
+    function syncActionToggles() {
+      if (values.length === 0) {
+        selectAllInput.checked = false;
+        selectNoneInput.checked = false;
+        return;
+      }
+      const selectedCount = selected[dimension].size;
+      selectAllInput.checked = selectionActive[dimension] && selectedCount === values.length;
+      selectNoneInput.checked = selectionActive[dimension] && selectedCount === 0;
+    }
+
+    function syncOptionChecks(checked) {
+      optionInputs.forEach((input) => {
+        input.checked = checked;
+      });
+    }
+
+    optionInputs.forEach((input) => {
+      input.addEventListener('change', (event) => {
+        const value = event.target.value;
+        selectionActive[dimension] = true;
+        if (event.target.checked) {
+          selected[dimension].add(value);
+        } else {
+          selected[dimension].delete(value);
+        }
+        syncActionToggles();
+        uiMap[dimension].trigger.textContent = getDisplayText(dimension);
+        applyFilter();
+      });
+    });
+
+    selectAllInput.addEventListener('change', (event) => {
+      if (!event.target.checked) {
+        syncActionToggles();
+        return;
+      }
+      selectionActive[dimension] = true;
+      selected[dimension] = new Set(values.map((item) => String(item)));
+      syncOptionChecks(true);
+      syncActionToggles();
+      uiMap[dimension].trigger.textContent = getDisplayText(dimension);
+      applyFilter();
+    });
+
+    selectNoneInput.addEventListener('change', (event) => {
+      if (!event.target.checked) {
+        syncActionToggles();
+        return;
+      }
+      selectionActive[dimension] = true;
+      selected[dimension].clear();
+      syncOptionChecks(false);
+      syncActionToggles();
+      uiMap[dimension].trigger.textContent = getDisplayText(dimension);
+      applyFilter();
+    });
+
+    syncActionToggles();
+  }
+
+  function togglePanel(dimension) {
+    Object.keys(uiMap).forEach((key) => {
+      if (key !== dimension) {
+        uiMap[key].panel.classList.remove('open');
+      }
+    });
+    uiMap[dimension].panel.classList.toggle('open');
+  }
+
+  Object.keys(uiMap).forEach((dimension) => {
+    uiMap[dimension].trigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      togglePanel(dimension);
+    });
+  });
+
+  document.addEventListener('click', () => {
+    Object.keys(uiMap).forEach((dimension) => {
+      uiMap[dimension].panel.classList.remove('open');
+    });
+  });
+
+  function renderTopTable(target, rows, nameKey) {
+    target.innerHTML = '';
+    if (rows.length === 0) {
+      target.innerHTML = '<tr><td colspan="2" style="color:#999;">无数据</td></tr>';
+      return;
+    }
+    rows.forEach((item) => {
+      target.innerHTML += `<tr><td>${escapeHtml(item[nameKey])}</td><td>${fmtMoney(item.amount)}</td></tr>`;
+    });
+  }
+
+  function applyFilter() {
+    const selectedMonths = selectionActive.month ? selected.month : null;
+    const selectedProvinces = selectionActive.province ? selected.province : null;
+    const selectedStores = selectionActive.store ? selected.store : null;
+    const selectedBrands = selectionActive.brand ? selected.brand : null;
+
+    const filtered = normalizedRecords.filter((item) => {
+      const monthMatch = !selectedMonths || selectedMonths.has(item.month);
+      const provinceMatch = !selectedProvinces || selectedProvinces.has(item.province || '未知省份');
+      const storeMatch = !selectedStores || selectedStores.has(item.store);
+      const brandMatch = !selectedBrands || selectedBrands.has(item.brand);
+      return monthMatch && provinceMatch && storeMatch && brandMatch;
+    });
+
+    const totals = filtered.reduce((acc, item) => {
+      acc.amount += Number(item.amount || 0);
+      acc.qty += Number(item.qty || 0);
+      acc.net += Number(item.net || 0);
+      return acc;
+    }, { amount: 0, qty: 0, net: 0 });
+
+    const avgPrice = totals.qty > 0 ? totals.amount / totals.qty : 0;
+    document.getElementById('cf-sales-amount').textContent = fmtNum(totals.amount);
+    document.getElementById('cf-sales-qty').textContent = fmtNum(totals.qty);
+    document.getElementById('cf-sales-net').textContent = fmtNum(totals.net);
+    document.getElementById('cf-avg-price').textContent = fmtNum(avgPrice);
+    document.getElementById('cf-records').textContent = fmtNum(filtered.length);
+    scopeText.textContent = `当前筛选：时间=${getDisplayText('month')}，省份=${getDisplayText('province')}，门店=${getDisplayText('store')}，品牌=${getDisplayText('brand')}`;
+    if (lockbarMonth) lockbarMonth.textContent = `时间：${getDisplayText('month')}`;
+    if (lockbarProvince) lockbarProvince.textContent = `省份：${getDisplayText('province')}`;
+    if (lockbarStore) lockbarStore.textContent = `门店：${getDisplayText('store')}`;
+    if (lockbarBrand) lockbarBrand.textContent = `品牌：${getDisplayText('brand')}`;
+
+    const productTotals = {};
+    const storeTotals = {};
+    filtered.forEach((item) => {
+      const product = item.product || '未知';
+      const store = item.store || '未知';
+      productTotals[product] = (productTotals[product] || 0) + Number(item.amount || 0);
+      storeTotals[store] = (storeTotals[store] || 0) + Number(item.amount || 0);
+    });
+
+    const topProducts = Object.entries(productTotals)
+      .map(([product, amount]) => ({ product, amount }))
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 10);
+    const topStores = Object.entries(storeTotals)
+      .map(([store, amount]) => ({ store, amount }))
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 10);
+
+    renderTopTable(topProductsBody, topProducts, 'product');
+    renderTopTable(topStoresBody, topStores, 'store');
+    applyGlobalFilteredView(filtered, {
+      month: getDisplayText('month'),
+      province: getDisplayText('province'),
+      store: getDisplayText('store'),
+      brand: getDisplayText('brand'),
+    });
+  }
+
+  buildPanel('month');
+  buildPanel('province');
+  buildPanel('store');
+  buildPanel('brand');
+  monthTrigger.textContent = '全部';
+  provinceTrigger.textContent = '全部';
+  storeTrigger.textContent = '全部';
+  brandTrigger.textContent = '全部';
+
+  resetBtn.addEventListener('click', () => {
+    selected.month.clear();
+    selected.province.clear();
+    selected.store.clear();
+    selected.brand.clear();
+    selectionActive.month = false;
+    selectionActive.province = false;
+    selectionActive.store = false;
+    selectionActive.brand = false;
+
+    monthOptions.querySelectorAll('input[type="checkbox"]').forEach((input) => { input.checked = false; });
+    provinceOptions.querySelectorAll('input[type="checkbox"]').forEach((input) => { input.checked = false; });
+    storeOptions.querySelectorAll('input[type="checkbox"]').forEach((input) => { input.checked = false; });
+    brandOptions.querySelectorAll('input[type="checkbox"]').forEach((input) => { input.checked = false; });
+
+    monthTrigger.textContent = '全部';
+    provinceTrigger.textContent = '全部';
+    storeTrigger.textContent = '全部';
+    brandTrigger.textContent = '全部';
+
+    applyFilter();
+  });
+
+  applyFilter();
+}
+
+updateReportMetaDisplay();
+updateKPIs();
+updateInsights();
+initCrossFilter();
+
+// 月度销售金额图
+const monthlySalesTrendData = buildTrendLineChartData(
+  chartData.months,
+  chartData.monthlySales,
+  '销售金额',
+  '#1a237e',
+  'rgba(26, 35, 126, 0.1)'
+);
+new Chart(document.getElementById('monthlySalesChart'), {
+  type: 'line',
+  data: monthlySalesTrendData,
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: monthlySalesTrendData.datasets.length > 1 } },
+  }
+});
+
+// 日销售金额图
+const dailySalesTrendData = buildDailyTrendChartData(chartData.dailySales || []);
+new Chart(document.getElementById('dailySalesChart'), {
+  type: 'line',
+  data: dailySalesTrendData,
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: dailySalesTrendData.datasets.length > 1 } },
+    scales: { x: { ticks: { maxRotation: 45, minRotation: 45, font: {size:10} } } }
+  }
+});
+
+const brandNames = (chartData.brandOrder && chartData.brandOrder.length > 0)
+  ? chartData.brandOrder
+  : Object.keys(chartData.brandMonthlyStacked || {});
+const brandColorMap = {
+  '伊利': '#1a237e',
+  '秦俑': '#f59e0b',
+  '君乐宝': '#4caf50',
+  '佳贝艾特': '#f44336',
+};
+const fallbackBrandPalette = ['#00acc1', '#8e24aa', '#7cb342', '#ef6c00', '#3949ab', '#00897b'];
+function getBrandColor(name, idx) {
+  if (brandColorMap[name]) return brandColorMap[name];
+  return fallbackBrandPalette[idx % fallbackBrandPalette.length];
+}
+const brandColors = brandNames.map((name, idx) => getBrandColor(name, idx));
+
+// 品牌月度堆叠柱状图
+new Chart(document.getElementById('brandMonthlyStacked'), {
+  type: 'bar',
+  data: {
+    labels: chartData.months,
+    datasets: brandNames.map((name, idx) => ({
+      label: name,
+      data: chartData.brandMonthlyStacked[name] || chartData.months.map(() => 0),
+      backgroundColor: brandColors[idx],
+    }))
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: 'top' } },
+    scales: { x: { stacked: true }, y: { stacked: true } }
+  }
+});
+
+// 销售数量月度曲线图
+const qtyMonthlyTrendData = buildTrendLineChartData(
+  chartData.months,
+  chartData.monthlyQty,
+  '销售数量',
+  '#4caf50',
+  'rgba(76, 175, 80, 0.1)'
+);
+new Chart(document.getElementById('qtyMonthlyChart'), {
+  type: 'line',
+  data: qtyMonthlyTrendData,
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: qtyMonthlyTrendData.datasets.length > 1 } },
+  }
+});
+
+// 品牌销售金额占比饼图 (累计占比)
+const brandPieLabels = brandNames.map((name, i) => `${name} ${Number(chartData.brandShares[i] || 0).toFixed(1)}%`);
+
+new Chart(document.getElementById('brandPieChart'), {
+  type: 'pie',
+  data: {
+    labels: brandPieLabels,
+    datasets: [{
+      data: chartData.brandShares.slice(0, brandNames.length),
+      backgroundColor: brandColors
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'right' },
+      title: {
+        display: true,
+        text: '品牌销售金额累计占比'
+      }
+    }
+  }
+});
+
+// 品牌销售数量占比饼图 (累计占比)
+const brandQtyLabels = brandNames.map((name, i) => `${name} ${Number(chartData.brandQtyShares[i] || 0).toFixed(1)}%`);
+
+new Chart(document.getElementById('brandQtyPieChart'), {
+  type: 'pie',
+  data: {
+    labels: brandQtyLabels,
+    datasets: [{
+      data: chartData.brandQtyShares.slice(0, brandNames.length),
+      backgroundColor: brandColors
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'right' },
+      title: {
+        display: true,
+        text: '品牌销售数量累计占比'
+      }
+    }
+  }
+});
+
+// 品牌销售数量柱状图
+new Chart(document.getElementById('brandQtyBarChart'), {
+  type: 'bar',
+  data: {
+    labels: brandNames,
+    datasets: [{
+      label: '销售数量',
+      data: chartData.brandQty.slice(0, brandNames.length),
+      backgroundColor: brandColors
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+});
+
+// Top20产品水平条形图
+new Chart(document.getElementById('top20ProductsChart'), {
+  type: 'bar',
+  data: {
+    labels: chartData.top20Products.map(p => p.name),
+    datasets: [{
+      label: '销售金额',
+      data: chartData.top20Products.map(p => p.value),
+      backgroundColor: '#2196f3'
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  }
+});
+
+// Top20产品销售数量水平条形图
+new Chart(document.getElementById('top20ProductsQtyChart'), {
+  type: 'bar',
+  data: {
+    labels: chartData.top20ProductsQty.map(p => p.name),
+    datasets: [{
+      label: '销售数量',
+      data: chartData.top20ProductsQty.map(p => p.value),
+      backgroundColor: '#6b8ef5'
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  }
+});
+
+// 产品稳定性图
+new Chart(document.getElementById('productStabilityChart'), {
+  type: 'bar',
+  data: {
+    labels: chartData.productStability.map(p => p.name),
+    datasets: [
+      { label: '进入Top10月数', data: chartData.productStability.map(p => p.months), backgroundColor: '#1a237e', yAxisID: 'y' },
+      { label: 'Top10内销售额', data: chartData.productStability.map(p => p.sales), backgroundColor: '#2196f3', yAxisID: 'y1' }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: { title: { display: true, text: '月数' } },
+      y1: { position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: '销售额' } }
+    }
+  }
+});
+
+// Top20门店水平条形图
+new Chart(document.getElementById('top20StoresChart'), {
+  type: 'bar',
+  data: {
+    labels: chartData.top20Stores.map(s => s.name),
+    datasets: [{
+      label: '销售金额',
+      data: chartData.top20Stores.map(s => s.value),
+      backgroundColor: '#4caf50'
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  }
+});
+
+// 门店分类矩阵 - 填充分类结果
+const categoryNames = {
+  'star': '明星门店',
+  'potential': '潜力门店',
+  'volume': '走量门店',
+  'improve': '待提升门店'
+};
+
+const categoryIds = {
+  'star': 'star-stores',
+  'potential': 'potential-stores',
+  'volume': 'volume-stores',
+  'improve': 'improve-stores'
+};
+
+Object.keys(chartData.storeClassification).forEach(category => {
+  const container = document.getElementById(categoryIds[category]);
+  const stores = chartData.storeClassification[category];
+  if (!container) return;
+  if (stores.length === 0) {
+    container.innerHTML = '<p style="font-size:13px;color:#999;">无</p>';
+  } else {
+    container.innerHTML = stores.map(s => `<span style='display:inline-block;background:#fff;border:1px solid #ddd;border-radius:4px;padding:4px 8px;margin:4px;font-size:12px;'>${escapeHtml(s.name)}</span>`).join('');
+  }
+});
+
+// 门店分类矩阵 - 散点图
+const scatterDatasets = {};
+chartData.storeScatterData.forEach(point => {
+  if (!scatterDatasets[point.category]) {
+    scatterDatasets[point.category] = {
+      label: categoryNames[point.category],
+      data: [],
+      backgroundColor: point.color,
+      borderColor: point.color,
+      pointRadius: 7,
+      pointHoverRadius: 9
+    };
+  }
+  scatterDatasets[point.category].data.push({
+    x: point.x,
+    y: point.y,
+    name: point.name
+  });
+});
+
+new Chart(document.getElementById('storeScatterChart'), {
+  type: 'scatter',
+  data: { datasets: Object.values(scatterDatasets) },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const raw = context.raw || {};
+            return `${raw.name || ''} | 销量:${raw.x} | 客单价:${raw.y}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { title: { display: true, text: '销售数量' } },
+      y: { title: { display: true, text: '客单价' } }
+    }
+  }
+});
+
+// 门店稳定性图
+new Chart(document.getElementById('storeStabilityChart'), {
+  type: 'bar',
+  data: {
+    labels: chartData.storeStability.map(s => s.name),
+    datasets: [
+      { label: '进入Top20月数', data: chartData.storeStability.map(s => s.months), backgroundColor: '#4caf50', yAxisID: 'y' },
+      { label: 'Top20内销售额', data: chartData.storeStability.map(s => s.sales), backgroundColor: '#2196f3', yAxisID: 'y1' }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: { title: { display: true, text: '月数' } },
+      y1: { position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: '销售额' } }
+    }
+  }
+});
+
+// 门店雷达图
+new Chart(document.getElementById('storeRadarChart'), {
+  type: 'radar',
+  data: {
+    labels: ['销售额', '客单价', 'SKU覆盖率', '动销天数', '商品周转'],
+    datasets: chartData.radarData.map((d, i) => ({
+      label: d.label,
+      data: d.data,
+      backgroundColor: `rgba(${i === 0 ? '26, 35, 126' : i === 1 ? '33, 150, 243' : i === 2 ? '76, 175, 80' : i === 3 ? '244, 67, 54' : '255, 152, 0'}, 0.2)`,
+      borderColor: `rgb(${i === 0 ? '26, 35, 126' : i === 1 ? '33, 150, 243' : i === 2 ? '76, 175, 80' : i === 3 ? '244, 67, 54' : '255, 152, 0'})`,
+      pointBackgroundColor: `rgb(${i === 0 ? '26, 35, 126' : i === 1 ? '33, 150, 243' : i === 2 ? '76, 175, 80' : i === 3 ? '244, 67, 54' : '255, 152, 0'})`,
+      borderWidth: 2
+    }))
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      r: { beginAtZero: true, max: 100, ticks: { stepSize: 20, font: { size: 11 } }, pointLabels: { font: { size: 12, weight: '600' } } }
+    },
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, usePointStyle: true, padding: 15 } } }
+  }
+});
+
+// 产品销售额集中度帕累托图
+new Chart(document.getElementById('productConcentrationChart'), {
+  type: 'bar',
+  data: {
+    labels: chartData.productConcentration.labels,
+    datasets: [
+      {
+        label: '销售金额',
+        data: chartData.productConcentration.sales,
+        backgroundColor: '#1a237e',
+        yAxisID: 'y'
+      },
+      {
+        label: '累计占比',
+        data: chartData.productConcentration.cumulative,
+        type: 'line',
+        borderColor: '#f44336',
+        backgroundColor: 'rgba(244, 67, 54, 0.1)',
+        yAxisID: 'y1'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: 'top' } },
+    scales: {
+      x: { ticks: { font: { size: 10 } } },
+      y: { type: 'linear', display: true, position: 'left', title: { display: true, text: '销售金额' } },
+      y1: { type: 'linear', display: true, position: 'right', min: 0, max: 100, title: { display: true, text: '累计占比 (%)' }, grid: { drawOnChartArea: false }, ticks: { callback: function(value) { return value + '%'; } } }
+    }
+  }
+});
+
+// 门店集中度累计占比图
+new Chart(document.getElementById('storeConcentrationChart'), {
+  type: 'line',
+  data: {
+    labels: chartData.storeConcentration.labels,
+    datasets: [{
+      label: '累计销售额占比',
+      data: chartData.storeConcentration.cumulative,
+      borderColor: '#4caf50',
+      backgroundColor: 'rgba(76, 175, 80, 0.2)',
+      fill: true,
+      tension: 0.35
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { min: 0, max: 100, title: { display: true, text: '累计占比 (%)' }, ticks: { callback: function(value) { return value + '%'; } } }
+    }
+  }
+});
+
+// 品牌Tab切换
+document.querySelectorAll('.brand-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.brand-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('brand-cumulative-body').style.display = this.dataset.tab === 'cumulative' ? '' : 'none';
+    document.getElementById('brand-current-body').style.display = this.dataset.tab === 'current' ? '' : 'none';
+  });
+});
+
+</script>
+</body>
+</html>

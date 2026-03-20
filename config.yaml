@@ -1,0 +1,119 @@
+# Pseudoctor Business Reviewer - Configuration File
+# Edit this file to customize the data processing pipeline
+
+# ============================================================================
+# DATA PATHS
+# ============================================================================
+
+# Directory containing raw Excel files (sales and inventory)
+raw_data_dir: "./raw_data"
+
+# Output directory for generated analysis_data.json
+output_dir: "./data"
+output_file: "./data/analysis_data.json"
+
+# ============================================================================
+# SALES DATA FILES
+# ============================================================================
+
+# List of monthly sales files to process
+# Files should be in the raw_data_dir
+sales_files:
+  - "陕西华润销售20250101-20250831.xlsx"
+  - "陕西华润销售202511.xlsx"
+  - "陕西华润销售202512.xlsx"
+  - "陕西华润销售202601.xlsx"
+  - "陕西华润销售202602.xlsx"
+
+# File name pattern for sales files: YYYYMM.xlsx
+# You can add more months or change the existing ones
+
+# ============================================================================
+# INVENTORY DATA
+# ============================================================================
+
+# Inventory file name (should be in raw_data_dir)
+# Format: YYYYMM库存.xlsx (or use your own naming)
+inventory_file: "陕西华润库存20260228.xlsx"
+
+# ============================================================================
+# DATA PROCESSING SETTINGS
+# ============================================================================
+
+# Missing value threshold: columns with more than this ratio of missing values
+# will be dropped (0.4 = 40%)
+missing_value_threshold: 0.4
+
+# Outlier detection threshold (in IQR multiples)
+outlier_threshold: 3.0
+
+# Minimum year to include for monthly reporting (null = no year filter)
+min_year: 2025
+
+# ============================================================================
+# RISK CLASSIFICATION (库存/销售比)
+# ============================================================================
+
+# High risk threshold: inventory/sales ratio >= this value
+risk_high_threshold: 20
+
+# Medium risk threshold: inventory/sales ratio >= this value but < high_threshold
+risk_medium_threshold: 5
+
+# Low risk: inventory/sales ratio < medium_threshold
+
+# ============================================================================
+# CHART SETTINGS
+# ============================================================================
+
+# Number of top brands to display in charts
+top_n_brands: 8
+
+# Number of top stores to display in charts
+top_n_stores: 8
+
+# Number of top products to display
+top_n_products: 20
+
+# ============================================================================
+# INVENTORY SETTINGS
+# ============================================================================
+
+# Slow-moving items threshold
+# Products with inventory/sales ratio >= this value will be flagged
+slow_items_threshold: 5.0
+
+# Number of slow-moving items to display in report
+max_slow_items: 20
+
+# ============================================================================
+# REPORT SETTINGS
+# ============================================================================
+
+# Report title
+report_title: "Business Sales & Inventory Turnover Analysis Report"
+
+# Date format for display
+date_format: "%Y-%m-%d"
+
+# Number of decimal places for amounts
+amount_decimals: 2
+
+# Number of decimal places for quantities
+quantity_decimals: 1
+
+# ============================================================================
+# ADVANCED OPTIONS
+# ============================================================================
+
+# Enable debug output
+debug: false
+
+# Log file path (leave empty to disable file logging)
+log_file: ""
+
+# Skip data cleaning (not recommended)
+skip_cleaning: false
+
+# Include sales net amount in calculations
+include_sales_net: true
