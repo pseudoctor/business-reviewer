@@ -4,6 +4,18 @@
 
 This project analyzes sales data and inventory turnover, generating professional data analysis reports.
 
+## Report Preview
+
+The screenshots below use sanitized example data from the public report template.
+
+### Overview
+
+![Report Overview](docs/images/report-overview.png)
+
+### Detail View
+
+![Report Detail](docs/images/report-detail.png)
+
 ## Project Structure
 
 ``` 
@@ -21,10 +33,13 @@ pseudoctor-business-reviewer/
 │   ├── marketing_analysis_example.py          # Optional demo script
 │   └── marketing_analysis_template.py         # Optional demo template
 ├── reports/
-│   ├── business_sales_inventory_report.html   # Report template
-│   └── report_with_data.html                  # Final report with embedded latest data
+│   ├── business_sales_inventory_report.html   # Public report template with sample data
+│   └── report_with_data.html                  # Generated local report (gitignored)
 ├── docs/
 │   ├── INTEGRATION_GUIDE.md
+│   ├── images/
+│   │   ├── report-overview.png
+│   │   └── report-detail.png
 │   └── report_template_specification.md
 └── README.md
 ```
@@ -45,8 +60,8 @@ Recommended:
    - `python scripts/data_processor.py`
    - `python scripts/create_final_report.py`
 3. Generated outputs:
-   - `data/analysis_data.json`
-   - `reports/report_with_data.html`
+   - local `data/analysis_data.json`
+   - local `reports/report_with_data.html`
 
 Manual mode:
 
@@ -55,7 +70,9 @@ Manual mode:
 
 ### View Reports
 
-Open `reports/report_with_data.html` directly in a browser
+For local output, open `reports/report_with_data.html` directly in a browser.
+
+For the public repository preview, open `reports/business_sales_inventory_report.html`.
 
 ## Report Template Specification
 
